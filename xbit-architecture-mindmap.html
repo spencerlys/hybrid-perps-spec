@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XBIT Perp Engine — 全模块架构脑图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; color: #e0e0e0; overflow: hidden; }
+
+  #app { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  #sidebar { width: 320px; min-width: 320px; background: #111827; border-right: 1px solid #1e293b; display: flex; flex-direction: column; z-index: 10; }
+  #sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; }
+  #sidebar-header h2 { font-size: 16px; color: #60a5fa; margin-bottom: 4px; }
+  #sidebar-header p { font-size: 11px; color: #6b7280; }
+  #layer-list { flex: 1; overflow-y: auto; padding: 8px; }
+  .layer-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px; transition: all .2s; border-left: 3px solid transparent; }
+  .layer-item:hover { background: #1e293b; }
+  .layer-item.active { background: #1e293b; border-left-color: #60a5fa; }
+  .layer-item .layer-tag { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-right: 6px; display: inline-block; min-width: 28px; text-align: center; }
+  .layer-item .layer-name { font-size: 13px; font-weight: 600; }
+  .layer-item .layer-desc { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+  /* Main canvas */
+  #main { flex: 1; display: flex; flex-direction: column; position: relative; }
+  #top-bar { height: 52px; background: #111827; border-bottom: 1px solid #1e293b; display: flex; align-items: center; padding: 0 24px; gap: 12px; }
+  #top-bar h1 { font-size: 18px; font-weight: 700; color: #f9fafb; flex: 1; }
+  .phase-badge { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+  .phase-1 { background: #064e3b; color: #6ee7b7; }
+  .phase-2 { background: #1e3a5f; color: #7dd3fc; }
+  .phase-3 { background: #4c1d95; color: #c4b5fd; }
+  .phase-4 { background: #78350f; color: #fcd34d; }
+  #legend { display: flex; gap: 12px; }
+  #legend span { font-size: 10px; display: flex; align-items: center; gap: 4px; }
+  #legend .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  #canvas-area { flex: 1; overflow: auto; padding: 32px; }
+
+  /* Module detail panel */
+  #detail-panel { position: absolute; right: 0; top: 52px; bottom: 0; width: 420px; background: #111827; border-left: 1px solid #1e293b; transform: translateX(100%); transition: transform .3s ease; z-index: 20; overflow-y: auto; }
+  #detail-panel.open { transform: translateX(0); }
+  #detail-close { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #9ca3af; font-size: 20px; cursor: pointer; }
+  #detail-content { padding: 24px; }
+  #detail-content h3 { font-size: 18px; color: #f9fafb; margin-bottom: 4px; }
+  #detail-content .detail-layer { font-size: 11px; color: #60a5fa; margin-bottom: 16px; }
+  #detail-content .detail-section { margin-bottom: 16px; }
+  #detail-content .detail-section h4 { font-size: 13px; color: #9ca3af; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
+  #detail-content .detail-item { background: #1e293b; border-radius: 6px; padding: 10px 12px; margin-bottom: 6px; font-size: 12px; line-height: 1.5; }
+  #detail-content .detail-item .item-title { font-weight: 600; color: #e5e7eb; }
+  #detail-content .detail-item .item-desc { color: #9ca3af; margin-top: 2px; }
+  .tag-api { background: #1e3a5f; color: #7dd3fc; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+  .tag-ws { background: #4c1d95; color: #c4b5fd; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+  .tag-admin { background: #78350f; color: #fcd34d; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+  .tag-internal { background: #064e3b; color: #6ee7b7; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+  .tag-db { background: #581c87; color: #d8b4fe; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+
+  /* Mind map nodes */
+  .layer-section { margin-bottom: 32px; }
+  .layer-section-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .layer-section-title .lnum { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 700; }
+  .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .module-card { background: #1e293b; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; cursor: pointer; transition: all .2s; position: relative; }
+  .module-card:hover { border-color: #60a5fa; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(96,165,250,.15); }
+  .module-card .mc-name { font-size: 13px; font-weight: 600; color: #f9fafb; margin-bottom: 4px; }
+  .module-card .mc-desc { font-size: 11px; color: #9ca3af; line-height: 1.4; }
+  .module-card .mc-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .module-card .mc-tag { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+  .mc-phase { position: absolute; top: 8px; right: 8px; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+  .mc-count { font-size: 10px; color: #6b7280; margin-top: 6px; }
+
+  /* Colors per layer */
+  .lc-1 { background: #1a3a2a; border-color: #22c55e; } .lc-1 .lnum { background: #166534; color: #86efac; }
+  .lc-2 { background: #1a2a3a; border-color: #3b82f6; } .lc-2 .lnum { background: #1e40af; color: #93c5fd; }
+  .lc-3 { background: #2a1a2a; border-color: #a855f7; } .lc-3 .lnum { background: #6b21a8; color: #d8b4fe; }
+  .lc-4 { background: #2a2a1a; border-color: #eab308; } .lc-4 .lnum { background: #854d0e; color: #fde047; }
+  .lc-5 { background: #2a1a1a; border-color: #ef4444; } .lc-5 .lnum { background: #991b1b; color: #fca5a5; }
+  .lc-6 { background: #1a2a2a; border-color: #14b8a6; } .lc-6 .lnum { background: #115e59; color: #5eead4; }
+  .lc-7 { background: #1a1a2a; border-color: #8b5cf6; } .lc-7 .lnum { background: #5b21b6; color: #c4b5fd; }
+  .lc-8 { background: #2a1f1a; border-color: #f97316; } .lc-8 .lnum { background: #9a3412; color: #fdba74; }
+  .lc-9 { background: #1a2a25; border-color: #06b6d4; } .lc-9 .lnum { background: #155e75; color: #67e8f9; }
+  .lc-relay { background: #2a2020; border-color: #f43f5e; } .lc-relay .lnum { background: #9f1239; color: #fda4af; }
+  .lc-infra { background: #1f1f2a; border-color: #6366f1; } .lc-infra .lnum { background: #3730a3; color: #a5b4fc; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+
+  /* Stats bar */
+  #stats-bar { padding: 12px 24px; background: #0f172a; border-top: 1px solid #1e293b; display: flex; gap: 24px; font-size: 11px; color: #6b7280; }
+  #stats-bar .stat-val { color: #f9fafb; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h2>XBIT Perp Engine</h2>
+      <p>方案 2: 内部对赌 + 阈值对冲</p>
+    </div>
+    <div id="layer-list"></div>
+  </div>
+  <div id="main">
+    <div id="top-bar">
+      <h1>全模块架构脑图</h1>
+      <div id="legend">
+        <span><span class="dot" style="background:#6ee7b7"></span>Phase 1</span>
+        <span><span class="dot" style="background:#7dd3fc"></span>Phase 2</span>
+        <span><span class="dot" style="background:#c4b5fd"></span>Phase 3</span>
+        <span><span class="dot" style="background:#fcd34d"></span>Phase 4</span>
+      </div>
+    </div>
+    <div id="canvas-area"></div>
+    <div id="stats-bar"></div>
+    <div id="detail-panel">
+      <button id="detail-close">&times;</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+</div>
+<script>
+const DATA = {
+  layers: [
+    {
+      id: "relay", tag: "R0", name: "API 中继层", color: "relay",
+      desc: "HL 接口代理 & 格式适配，让前端无感迁移",
+      phase: 1,
+      modules: [
+        {
+          name: "REST 中继代理", desc: "代理 HL /info 全部只读接口",
+          phase: 1,
+          details: [
+            { title: "市场元数据代理", desc: "meta, metaAndAssetCtxs, spotMeta → 转发 HL 并缓存", tags: ["api"] },
+            { title: "价格数据代理", desc: "allMids, l2Book, candleSnapshot → 低延迟转发", tags: ["api"] },
+            { title: "用户数据代理", desc: "clearinghouseState, activeAssetData, userFees → 替换为 XBIT 内部数据（Phase 3）", tags: ["api"] },
+            { title: "交易历史代理", desc: "userFills, userFillsByTime, historicalOrders, userFunding → 合并内部+HL 记录", tags: ["api"] },
+            { title: "资金数据代理", desc: "userNonFundingLedgerUpdates, portfolio → 统一账本视图", tags: ["api"] },
+            { title: "响应格式适配器", desc: "保持与 HL 完全一致的 JSON 结构，前端零改动", tags: ["internal"] },
+            { title: "缓存策略", desc: "meta/spotMeta 按小时缓存; allMids/l2Book 实时透传; 降低 HL 请求压力", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "WebSocket 中继", desc: "代理 HL WebSocket 全部 channel",
+          phase: 1,
+          details: [
+            { title: "市场数据流转发", desc: "l2Book, trades, candle, candle_1d, allMids, activeAssetCtx → 直接透传", tags: ["ws"] },
+            { title: "用户数据流代理", desc: "webData2, userFills, userHistoricalOrders, activeAssetData → Phase 3 后注入内部数据", tags: ["ws"] },
+            { title: "连接管理", desc: "多路复用: 一个上游 HL WS 连接服务多个下游客户端; 心跳检测; 自动重连", tags: ["ws"] },
+            { title: "订阅管理", desc: "客户端 subscribe/unsubscribe → 聚合后向 HL 发送; 引用计数避免重复订阅", tags: ["ws"] },
+            { title: "延迟监控", desc: "实时监测 HL→XBIT→Client 全链路延迟; >500ms 触发告警", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "Exchange 操作代理", desc: "代理 HL /exchange 写操作",
+          phase: 1,
+          details: [
+            { title: "下单代理", desc: "order action → Phase 1 直接转发 HL; Phase 2 后经路由引擎决策", tags: ["api"] },
+            { title: "撤单代理", desc: "cancel action → 判断订单归属(INTERNAL/HL)后分别处理", tags: ["api"] },
+            { title: "签名验证层", desc: "前端 EIP-712 签名 → XBIT 验证后用平台 Agent 密钥代签 HL 请求", tags: ["api"] },
+            { title: "Builder Fee 注入", desc: "所有转发 HL 的订单自动注入 XBIT builder fee (0.02%)", tags: ["internal"] },
+            { title: "请求限流", desc: "per-user & global rate limiting; 防刷单; 防 DDoS", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l1", tag: "L1", name: "账户与资产层", color: "1",
+      desc: "用户注册、钱包、充提币、余额管理",
+      phase: 1,
+      modules: [
+        {
+          name: "用户账户系统", desc: "注册 / 登录 / 身份管理",
+          phase: 1,
+          details: [
+            { title: "Web2 注册", desc: "邮箱/手机号注册 → OTP 验证 → 创建 XBIT 账户", tags: ["api"] },
+            { title: "Web3 钱包登录", desc: "MetaMask / WalletConnect 签名验证 → 绑定 XBIT 账户", tags: ["api"] },
+            { title: "Turnkey 密钥托管", desc: "为每个用户通过 Turnkey HSM 创建内部钱包地址", tags: ["internal"] },
+            { title: "KYC/AML 接口预留", desc: "身份验证接口(暂不实现); 提币额度与 KYC 等级挂钩", tags: ["api"] },
+            { title: "Session 管理", desc: "JWT + Refresh Token; 多设备登录; Agent 授权机制", tags: ["api"] },
+          ]
+        },
+        {
+          name: "钱包与余额", desc: "用户资金账户管理",
+          phase: 1,
+          details: [
+            { title: "余额账本", desc: "总余额 / 可用余额 / 冻结余额(保证金占用) / 逐仓占用 / 全仓占用", tags: ["db"] },
+            { title: "余额变动流水", desc: "充值/提币/开仓冻结/平仓释放/清算/资金费率/手续费 — 每笔均记录", tags: ["db"] },
+            { title: "可用余额计算", desc: "可用 = 总余额 - Σ逐仓保证金 - Σ全仓初始保证金占用 + Σ全仓未实现盈亏(如为正)", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "充提币系统", desc: "多链充值 & 提现",
+          phase: 1,
+          details: [
+            { title: "TRON 充值", desc: "USDT(TRC20) — 19确认 — P0", tags: ["internal"] },
+            { title: "Ethereum 充值", desc: "USDT/USDC(ERC20) — 12确认 — P0", tags: ["internal"] },
+            { title: "Solana 充值", desc: "USDT/USDC(SPL) — 32 slots — P1", tags: ["internal"] },
+            { title: "充值地址生成", desc: "每用户每链唯一充值地址; Turnkey 托管私钥", tags: ["internal"] },
+            { title: "链上监听", desc: "区块扫描 → 检测充值交易 → 等待确认数 → 入账", tags: ["internal"] },
+            { title: "提币流程", desc: "用户申请 → 风控审核(大额人工) → 二次验证 → 链上发送 → 确认", tags: ["api"] },
+            { title: "热冷钱包", desc: "热钱包自动充提; 冷钱包大额存储; 阈值自动归集", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l2", tag: "L2", name: "订单路由层", color: "2",
+      desc: "按名义价值决策走对赌还是 HL",
+      phase: 2,
+      modules: [
+        {
+          name: "路由决策引擎", desc: "核心路由判断 (<5ms P99)",
+          phase: 2,
+          details: [
+            { title: "名义价值计算", desc: "notional = quantity × HL mark price; 实时取价", tags: ["internal"] },
+            { title: "阈值判断", desc: "notional ≤ threshold → INTERNAL; > threshold → HYPERLIQUID; 默认 $10K", tags: ["internal"] },
+            { title: "币种级阈值", desc: "支持 per-symbol 不同阈值; 如 BTC $10K, DOGE $5K", tags: ["admin"] },
+            { title: "强制路由规则", desc: "币种净敞口达限 / 波动>5%/h / HL 延迟>500ms / 管理员关闭 → 强制 HL", tags: ["internal"] },
+            { title: "路由日志", desc: "每笔决策记录: 订单ID, 名义价值, 路由结果, 决策耗时, 触发条件", tags: ["db"] },
+          ]
+        },
+        {
+          name: "订单管理器", desc: "统一订单生命周期",
+          phase: 2,
+          details: [
+            { title: "订单创建", desc: "统一入口: 验证参数 → 计算名义价值 → 路由决策 → 分发", tags: ["api"] },
+            { title: "订单类型支持", desc: "市价单 / 限价单 / TP(止盈) / SL(止损)", tags: ["api"] },
+            { title: "订单状态机", desc: "Pending → Routed → Filled/PartialFill/Cancelled/Rejected", tags: ["internal"] },
+            { title: "平仓路由", desc: "强制跟随仓位归属: INTERNAL 仓位内部平, HL 仓位发 HL 平仓", tags: ["internal"] },
+            { title: "撤单处理", desc: "INTERNAL 挂单直接取消; HL 挂单转发 cancel 到 HL", tags: ["api"] },
+            { title: "订单回执统一", desc: "无论走哪条路径, 返回给前端的回执格式完全一致", tags: ["api"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l3", tag: "L3", name: "平台对赌执行层", color: "3",
+      desc: "内部仓位管理、对赌记账、B-book 执行",
+      phase: 3,
+      modules: [
+        {
+          name: "内部撮合执行", desc: "对赌成交逻辑 (<10ms)",
+          phase: 3,
+          details: [
+            { title: "市价成交", desc: "取 HL 当前最优买/卖价作为成交价; 即时确认", tags: ["internal"] },
+            { title: "限价单管理", desc: "挂单簿管理; 价格到达时按限价成交; 用 HL 实时价格触发", tags: ["internal"] },
+            { title: "成交确认", desc: "生成 fill 记录; 更新用户仓位; 冻结保证金; 推送 WS 通知", tags: ["internal"] },
+            { title: "平台对手仓位", desc: "自动创建与用户完全反向的平台仓位; 用户多→平台空", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "内部仓位簿", desc: "所有 INTERNAL 仓位的数据管理",
+          phase: 3,
+          details: [
+            { title: "仓位数据模型", desc: "position_id / user_id / symbol / direction / size / entry_price / leverage / margin_mode / status", tags: ["db"] },
+            { title: "仓位更新", desc: "开仓创建 / 加仓(均价重算) / 减仓 / 平仓 / 清算", tags: ["internal"] },
+            { title: "未实现 PnL", desc: "多头: (mark_price - entry) × size; 空头: (entry - mark_price) × size; 实时计算", tags: ["internal"] },
+            { title: "资金费率处理", desc: "每 8h 按 HL 费率对所有 INTERNAL 仓位执行资金费率结算", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l4", tag: "L4", name: "HL 代理执行层", color: "4",
+      desc: "大额订单 HL 代开、仓位状态同步",
+      phase: 2,
+      modules: [
+        {
+          name: "HL 订单执行", desc: "平台统一账户代理下单",
+          phase: 2,
+          details: [
+            { title: "代理开仓", desc: "用平台 HL 账户向 HL 发送 order action; 合并进统一仓位", tags: ["api"] },
+            { title: "代理平仓", desc: "发送减仓指令; 从合并仓位中减去对应用户数量", tags: ["api"] },
+            { title: "Agent 密钥管理", desc: "平台 HL Agent 密钥安全存储; 定期轮换; HSM 保护", tags: ["internal"] },
+            { title: "滑点控制", desc: "市价单滑点上限设置; 超出则拒绝或拆单", tags: ["internal"] },
+            { title: "订单确认同步", desc: "HL 成交回执 → 更新 XBIT 内部映射表 → 推送用户", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "HL 仓位映射", desc: "用户→HL合并仓位的映射管理",
+          phase: 2,
+          details: [
+            { title: "用户虚拟仓位表", desc: "每用户独立记录: position_id / entry_price / size — HL 端实际合并", tags: ["db"] },
+            { title: "合并仓位追踪", desc: "实时追踪 HL 账户每个 symbol 的合并仓位 size / 均价 / margin", tags: ["internal"] },
+            { title: "仓位一致性校验", desc: "Σ(用户仓位size) vs HL 实际仓位 size → 差异告警", tags: ["internal"] },
+            { title: "HL 状态同步", desc: "定期拉取 clearinghouseState → 与本地映射对比 → 修正偏差", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "HL 账户管理", desc: "平台 HL 统一账户健康监控",
+          phase: 2,
+          details: [
+            { title: "保证金率监控", desc: "安全>500% / 告警<300% / 紧急<150% → 自动/手动补资", tags: ["internal"] },
+            { title: "运营资金管理", desc: "平台自有资金; ≈ 总仓位名义/杠杆 × 3~5倍超额系数", tags: ["internal"] },
+            { title: "自动补资机制", desc: "可用余额低于安全线 → 从资金池自动转入", tags: ["internal"] },
+            { title: "紧急熔断", desc: "保证金率<150% → 暂停所有 HL 新开仓 + P0 告警", tags: ["admin"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l5", tag: "L5", name: "保证金与清算模型", color: "5",
+      desc: "全仓/逐仓保证金、统一清算引擎 (核心)",
+      phase: 3,
+      modules: [
+        {
+          name: "保证金计算引擎", desc: "逐仓 & 全仓保证金模型",
+          phase: 3,
+          details: [
+            { title: "逐仓初始保证金", desc: "= 名义价值 / 杠杆; 从可用余额冻结到仓位", tags: ["internal"] },
+            { title: "逐仓清算价(多)", desc: "= entry × (1 - margin/notional + maintenance_rate)", tags: ["internal"] },
+            { title: "逐仓清算价(空)", desc: "= entry × (1 + margin/notional - maintenance_rate)", tags: ["internal"] },
+            { title: "全仓账户权益", desc: "= 钱包余额 + Σ(全仓仓位未实现PnL)", tags: ["internal"] },
+            { title: "全仓清算条件", desc: "账户权益 ≤ Σ(全仓仓位名义 × 维持保证金率)", tags: ["internal"] },
+            { title: "混合模式", desc: "同一用户可同时持有逐仓+全仓仓位; 逐仓独立/全仓共享余额", tags: ["internal"] },
+            { title: "追加保证金", desc: "逐仓: 转入指定仓位降低清算价; 全仓: 充值增加共享余额", tags: ["api"] },
+            { title: "维持保证金率同步", desc: "从 HL meta 获取各币种维持保证金率; 每小时同步", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "统一清算引擎", desc: "INTERNAL + HL 仓位统一清算",
+          phase: 3,
+          details: [
+            { title: "逐仓清算检测", desc: "(保证金 + 未实现PnL) ≤ 名义 × 维持率 → 触发; <1s 延迟", tags: ["internal"] },
+            { title: "全仓清算检测", desc: "账户权益 ≤ 全仓维持保证金总需求 → 触发", tags: ["internal"] },
+            { title: "INTERNAL 清算执行", desc: "内部结算 → 保证金归零 → 80%入利润 + 20%入准备金", tags: ["internal"] },
+            { title: "HL 清算执行", desc: "XBIT 判断 → 向 HL 发市价平仓指令 → 从合并仓位减去", tags: ["api"] },
+            { title: "全仓清算顺序", desc: "先平亏损最大仓位 → 重算 → 恢复则停止 → 否则继续平下一个", tags: ["internal"] },
+            { title: "清算价格", desc: "以 HL 标记价格为准; 标记价格变动 → 1s 内完成清算判断", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l6", tag: "L6", name: "风控与敞口管理层", color: "6",
+      desc: "净敞口监控、HL 自动对冲、风险准备金",
+      phase: 3,
+      modules: [
+        {
+          name: "净敞口监控", desc: "实时追踪平台方向性风险",
+          phase: 3,
+          details: [
+            { title: "净敞口计算", desc: "per symbol: Σ(用户多头INTERNAL名义) - Σ(用户空头INTERNAL名义)", tags: ["internal"] },
+            { title: "总敞口", desc: "所有币种净敞口绝对值之和", tags: ["internal"] },
+            { title: "单日净亏损", desc: "实时累计当日对赌净PnL; >$100K 告警 / >$500K 暂停", tags: ["internal"] },
+            { title: "敞口阈值告警", desc: "单币>$500K 告警 / >$1M 紧急; 总敞口>$2M 告警 / >$5M 紧急", tags: ["admin"] },
+          ]
+        },
+        {
+          name: "对冲引擎", desc: "在 HL 开反向仓位降低净敞口",
+          phase: 3,
+          details: [
+            { title: "对冲阈值", desc: "<$100K不对冲 / $100-500K对冲50% / >$500K对冲80% / >$1M停对赌+80%", tags: ["internal"] },
+            { title: "对冲执行", desc: "批量下单(batchModify); 时间分片; 滑点控制", tags: ["api"] },
+            { title: "对冲仓位杠杆", desc: "固定低杠杆 2x~3x; 避免对冲仓位被清算", tags: ["internal"] },
+            { title: "对冲仓位管理", desc: "独立追踪对冲仓位; 敞口下降时自动减仓", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "风险准备金", desc: "平台风险缓冲资金池",
+          phase: 3,
+          details: [
+            { title: "资金来源", desc: "平台初始注入 ≥$500K + 客损20%自动转入 + 定期补充", tags: ["internal"] },
+            { title: "客损分配", desc: "每笔客损: 80%→平台利润 / 20%→准备金; 比例可配", tags: ["admin"] },
+            { title: "预警机制", desc: "≥$500K正常 / $200-500K缩减对赌 / <$200K暂停全部对赌", tags: ["admin"] },
+            { title: "使用场景", desc: "用户盈利出金 / 对冲亏损 / 极端行情集中亏损缓冲", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l7", tag: "L7", name: "市场数据层", color: "7",
+      desc: "HL 数据透传 & 格式适配",
+      phase: 1,
+      modules: [
+        {
+          name: "实时数据服务", desc: "WebSocket 实时推送",
+          phase: 1,
+          details: [
+            { title: "实时价格/标记价格", desc: "allMids channel → 透传所有币种中间价", tags: ["ws"] },
+            { title: "订单簿深度", desc: "l2Book channel → per-symbol 实时买卖盘", tags: ["ws"] },
+            { title: "最新成交", desc: "trades channel → 逐笔成交流", tags: ["ws"] },
+            { title: "K 线数据", desc: "candle + candle_1d channels → 实时 OHLCV", tags: ["ws"] },
+            { title: "市场上下文", desc: "activeAssetCtx → 资金费率/OI/24h涨跌等", tags: ["ws"] },
+          ]
+        },
+        {
+          name: "静态数据同步", desc: "REST 定期拉取 & 缓存",
+          phase: 1,
+          details: [
+            { title: "合约元数据", desc: "meta → 上架币种/杠杆范围/维持保证金率; 每小时同步", tags: ["api"] },
+            { title: "资金费率", desc: "predictedFundings → 预测费率; 每 8h 结算", tags: ["api"] },
+            { title: "币种上架同步", desc: "HL 新增币种 → 自动检测并同步到 XBIT", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "异常处理", desc: "HL 连接韧性保障",
+          phase: 1,
+          details: [
+            { title: "断连重连", desc: "指数退避重连策略; 最大间隔 30s", tags: ["internal"] },
+            { title: "延迟监测", desc: "HL→XBIT 延迟 >500ms → 暂停对赌; >200ms → 告警", tags: ["internal"] },
+            { title: "价格异常检测", desc: "价格跳变超阈值 → 使用最后有效价格 → 告警", tags: ["internal"] },
+            { title: "数据完整性", desc: "序号检查 / 快照+增量 / 定期全量校验", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l8", tag: "L8", name: "结算与对账层", color: "8",
+      desc: "PnL 计算、资金对账、资金费率结算",
+      phase: 3,
+      modules: [
+        {
+          name: "PnL 结算", desc: "已实现 & 未实现盈亏",
+          phase: 3,
+          details: [
+            { title: "已实现 PnL", desc: "平仓/清算时: 多头(平仓价-开仓价)×数量; 空头反之", tags: ["internal"] },
+            { title: "未实现 PnL", desc: "持仓中: 用 HL 标记价格实时计算; 影响全仓清算", tags: ["internal"] },
+            { title: "手续费结算", desc: "开仓/平仓各收取 taker/maker 费率; 从余额扣除", tags: ["internal"] },
+            { title: "资金费率结算", desc: "每 8h: 多头/空头按 HL 费率互付; INTERNAL 仓位平台为对手方", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "对账引擎", desc: "多维度资金一致性校验",
+          phase: 3,
+          details: [
+            { title: "用户资产校验", desc: "余额 + Σ保证金 + Σ未实现PnL = 用户总资产; 逐条核对", tags: ["internal"] },
+            { title: "平台对赌校验", desc: "净盈亏 = Σ(用户亏损) - Σ(用户盈利); 仅 INTERNAL", tags: ["internal"] },
+            { title: "HL 账户校验", desc: "HL 总资产 ≈ 运营注入 + Σ(HL仓位盈亏) + Σ(对冲盈亏)", tags: ["internal"] },
+            { title: "偏差告警", desc: ">0.01% 自动告警; >0.1% P0 紧急; 自动暂停相关操作", tags: ["admin"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "l9", tag: "L9", name: "后台管理层", color: "9",
+      desc: "路由配置、风控仪表盘、用户运营",
+      phase: 2,
+      modules: [
+        {
+          name: "路由与对赌配置", desc: "运营参数管理",
+          phase: 2,
+          details: [
+            { title: "全局路由阈值", desc: "默认 $10K; 支持实时调整", tags: ["admin"] },
+            { title: "币种级阈值", desc: "per-symbol 独立阈值设置", tags: ["admin"] },
+            { title: "对赌白名单", desc: "初期仅 BTC/ETH 允许对赌; 逐步扩展", tags: ["admin"] },
+            { title: "一键暂停对赌", desc: "紧急开关: 所有新订单强制走 HL", tags: ["admin"] },
+            { title: "客损准备金比例", desc: "默认20%; 可在线调整", tags: ["admin"] },
+          ]
+        },
+        {
+          name: "风控仪表盘", desc: "实时风险监控大屏",
+          phase: 3,
+          details: [
+            { title: "对赌敞口实时图", desc: "每币种净敞口; 多空分布; 趋势线", tags: ["admin"] },
+            { title: "盈亏曲线", desc: "平台对赌P&L 日/周/月; 用户盈亏分布", tags: ["admin"] },
+            { title: "路由统计", desc: "INTERNAL vs HL 订单量/金额/占比; 路由决策分布", tags: ["admin"] },
+            { title: "清算统计", desc: "清算次数/金额/类型; 逐仓vs全仓; INTERNAL vs HL", tags: ["admin"] },
+            { title: "HL 账户状态", desc: "保证金率 / 合并仓位 / 可用余额 / 对冲仓位", tags: ["admin"] },
+            { title: "准备金监控", desc: "余额 / 流入流出 / 预警状态", tags: ["admin"] },
+          ]
+        },
+        {
+          name: "用户与订单管理", desc: "运营查询工具",
+          phase: 2,
+          details: [
+            { title: "用户仓位查询", desc: "含 INTERNAL/HYPERLIQUID 标记; 实时PnL; 保证金状态", tags: ["admin"] },
+            { title: "订单路由历史", desc: "每笔订单的路由决策 / 成交价 / 状态 / 耗时", tags: ["admin"] },
+            { title: "清算记录", desc: "触发时间 / 标记价格 / 清算价格 / 回收金额", tags: ["admin"] },
+            { title: "用户余额操作", desc: "手动调账(审批流); 冻结/解冻; 出金审核", tags: ["admin"] },
+          ]
+        },
+        {
+          name: "权限管理", desc: "RBAC 角色权限",
+          phase: 2,
+          details: [
+            { title: "Super Admin", desc: "全部权限; 系统配置; 资金操作", tags: ["admin"] },
+            { title: "Risk Manager", desc: "对赌开关 / 敞口配置 / 对冲参数 / 准备金管理", tags: ["admin"] },
+            { title: "Operations", desc: "用户查询(只读); 订单查询; 出金审核", tags: ["admin"] },
+            { title: "Data Analyst", desc: "报表(只读); 数据导出", tags: ["admin"] },
+          ]
+        },
+      ]
+    },
+    {
+      id: "infra", tag: "IN", name: "基础设施层", color: "infra",
+      desc: "数据库、监控、安全、部署",
+      phase: 1,
+      modules: [
+        {
+          name: "数据库设计", desc: "核心数据存储",
+          phase: 1,
+          details: [
+            { title: "用户表", desc: "accounts / wallets / balances / balance_logs", tags: ["db"] },
+            { title: "订单表", desc: "orders (含 route 字段: INTERNAL/HYPERLIQUID)", tags: ["db"] },
+            { title: "仓位表", desc: "positions (含 position_source 字段: INTERNAL/HYPERLIQUID)", tags: ["db"] },
+            { title: "成交表", desc: "fills / trades — 内部+HL 统一记录", tags: ["db"] },
+            { title: "清算表", desc: "liquidations — 触发条件/执行结果/回收金额", tags: ["db"] },
+            { title: "对冲表", desc: "hedge_positions / hedge_orders — 平台对冲记录", tags: ["db"] },
+            { title: "对账表", desc: "reconciliation_logs — 每日对账结果/偏差", tags: ["db"] },
+            { title: "配置表", desc: "routing_config / risk_config / system_params", tags: ["db"] },
+          ]
+        },
+        {
+          name: "可观测性", desc: "监控 & 告警 & 日志",
+          phase: 1,
+          details: [
+            { title: "Prometheus + Grafana", desc: "延迟/吞吐/敞口/保证金率/准备金 — 实时仪表盘", tags: ["internal"] },
+            { title: "ELK 日志", desc: "全量操作日志; 结构化; 可查询", tags: ["internal"] },
+            { title: "P0 告警", desc: "5分钟响应; Slack/PagerDuty; 清算失败/HL断连/保证金率低", tags: ["internal"] },
+            { title: "审计日志", desc: "所有资金操作/配置变更/管理员操作 — 不可篡改", tags: ["db"] },
+          ]
+        },
+        {
+          name: "安全", desc: "认证、加密、防护",
+          phase: 1,
+          details: [
+            { title: "API 认证", desc: "HMAC 签名; JWT; API Key 管理", tags: ["api"] },
+            { title: "二次验证", desc: "提币/敏感操作: 2FA(TOTP) + 邮件确认", tags: ["api"] },
+            { title: "密钥管理", desc: "Turnkey HSM; HL Agent Key 安全存储; 定期轮换", tags: ["internal"] },
+            { title: "DDoS 防护", desc: "CDN + WAF + Rate Limiting", tags: ["internal"] },
+          ]
+        },
+        {
+          name: "部署架构", desc: "容器化 & CI/CD",
+          phase: 1,
+          details: [
+            { title: "容器化", desc: "Docker + K8s; 微服务拆分; 独立伸缩", tags: ["internal"] },
+            { title: "CI/CD", desc: "GitHub Actions → 自动测试 → 灰度发布 → 全量", tags: ["internal"] },
+            { title: "多区域", desc: "主备部署; 数据库主从; Redis 集群", tags: ["internal"] },
+            { title: "灾备", desc: "数据备份; 故障切换; 降级预案(全部转HL)", tags: ["internal"] },
+          ]
+        },
+      ]
+    },
+  ]
+};
+
+// Render sidebar
+const layerList = document.getElementById('layer-list');
+const canvasArea = document.getElementById('canvas-area');
+const detailPanel = document.getElementById('detail-panel');
+const detailContent = document.getElementById('detail-content');
+const statsBar = document.getElementById('stats-bar');
+
+let activeLayer = null;
+
+function renderSidebar() {
+  layerList.innerHTML = DATA.layers.map(l => `
+    <div class="layer-item" data-id="${l.id}" onclick="scrollToLayer('${l.id}')">
+      <span class="layer-tag lc-${l.color}" style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;">${l.tag}</span>
+      <span class="layer-name">${l.name}</span>
+      <div class="layer-desc">${l.desc}</div>
+    </div>
+  `).join('');
+}
+
+function phaseColor(p) {
+  return { 1: '#6ee7b7', 2: '#7dd3fc', 3: '#c4b5fd', 4: '#fcd34d' }[p] || '#9ca3af';
+}
+function phaseBg(p) {
+  return { 1: '#064e3b', 2: '#1e3a5f', 3: '#4c1d95', 4: '#78350f' }[p] || '#374151';
+}
+
+function tagHTML(t) {
+  const cls = { api: 'tag-api', ws: 'tag-ws', admin: 'tag-admin', internal: 'tag-internal', db: 'tag-db' };
+  return `<span class="${cls[t] || 'tag-internal'}">${t.toUpperCase()}</span>`;
+}
+
+function renderCanvas() {
+  canvasArea.innerHTML = DATA.layers.map(l => `
+    <div class="layer-section" id="layer-${l.id}">
+      <div class="layer-section-title lc-${l.color}">
+        <span class="lnum">${l.tag}</span>
+        ${l.name}
+        <span style="font-size:11px;font-weight:400;color:#6b7280;margin-left:8px;">${l.desc}</span>
+        <span style="margin-left:auto;font-size:10px;padding:2px 8px;border-radius:10px;background:${phaseBg(l.phase)};color:${phaseColor(l.phase)};font-weight:600;">Phase ${l.phase}</span>
+      </div>
+      <div class="modules-grid">
+        ${l.modules.map((m, mi) => `
+          <div class="module-card" onclick="showDetail('${l.id}', ${mi})">
+            <span class="mc-phase" style="background:${phaseBg(m.phase)};color:${phaseColor(m.phase)}">P${m.phase}</span>
+            <div class="mc-name">${m.name}</div>
+            <div class="mc-desc">${m.desc}</div>
+            <div class="mc-count">${m.details.length} 个功能点</div>
+            <div class="mc-tags">
+              ${[...new Set(m.details.flatMap(d => d.tags))].map(t => `<span class="mc-tag" style="background:${
+                { api:'#1e3a5f', ws:'#4c1d95', admin:'#78350f', internal:'#064e3b', db:'#581c87' }[t]
+              };color:${
+                { api:'#7dd3fc', ws:'#c4b5fd', admin:'#fcd34d', internal:'#6ee7b7', db:'#d8b4fe' }[t]
+              }">${t.toUpperCase()}</span>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function showDetail(layerId, moduleIdx) {
+  const layer = DATA.layers.find(l => l.id === layerId);
+  const mod = layer.modules[moduleIdx];
+  detailContent.innerHTML = `
+    <h3>${mod.name}</h3>
+    <div class="detail-layer">${layer.tag} ${layer.name} · Phase ${mod.phase}</div>
+    <div class="detail-section">
+      <h4>功能清单 (${mod.details.length})</h4>
+      ${mod.details.map(d => `
+        <div class="detail-item">
+          <div class="item-title">${d.title} ${d.tags.map(t => tagHTML(t)).join('')}</div>
+          <div class="item-desc">${d.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  detailPanel.classList.add('open');
+}
+
+document.getElementById('detail-close').onclick = () => detailPanel.classList.remove('open');
+
+function scrollToLayer(id) {
+  document.querySelectorAll('.layer-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.layer-item[data-id="${id}"]`).classList.add('active');
+  document.getElementById(`layer-${id}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  detailPanel.classList.remove('open');
+}
+
+// Stats
+function renderStats() {
+  let totalModules = 0, totalFeatures = 0, phases = {};
+  DATA.layers.forEach(l => {
+    l.modules.forEach(m => {
+      totalModules++;
+      totalFeatures += m.details.length;
+      phases[m.phase] = (phases[m.phase] || 0) + 1;
+    });
+  });
+  statsBar.innerHTML = `
+    <span>架构层: <span class="stat-val">${DATA.layers.length}</span></span>
+    <span>模块: <span class="stat-val">${totalModules}</span></span>
+    <span>功能点: <span class="stat-val">${totalFeatures}</span></span>
+    <span>Phase 1: <span class="stat-val">${phases[1]||0} 模块</span></span>
+    <span>Phase 2: <span class="stat-val">${phases[2]||0} 模块</span></span>
+    <span>Phase 3: <span class="stat-val">${phases[3]||0} 模块</span></span>
+  `;
+}
+
+renderSidebar();
+renderCanvas();
+renderStats();
+</script>
+</body>
+</html>
