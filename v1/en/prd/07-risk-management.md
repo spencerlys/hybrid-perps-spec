@@ -1,8 +1,8 @@
 ---
 doc_id: prd-en-risk-management
-title: L6 Risk & Exposure Management — Net Exposure, Hedging, Risk Reserve
-tags: [risk, exposure, hedge, reserve, monitoring, L6]
-version: 1.0
+title: L6 Risk & Exposure Management — Net Exposure, Routing Mode Linkage, Hedging, Risk Reserve
+tags: [risk, exposure, hedge, reserve, monitoring, routing-mode, L6]
+version: 1.1
 lang: en
 updated: 2026-04-08
 phase: Phase 3
@@ -26,6 +26,25 @@ BTC Net Exposure = Σ(user BTC long INTERNAL notional)
 - Near zero → Balanced book, low risk
 
 > HYPERLIQUID positions are excluded — their P&L flows through HL, no directional risk to the platform.
+
+## Net Exposure & Routing Mode Linkage
+
+Real-time net exposure drives routing mode switch recommendations. Thresholds are configurable in the admin panel (see [11-admin.md](11-admin.md)).
+
+| Net Exposure (absolute value) | System Action |
+|------------------------------|--------------|
+| ≤ Betting mode trigger threshold (default $50K) | Recommend switch to BETTING_MODE / auto-switch if enabled |
+| Between the two thresholds | Stay in NORMAL_MODE; no action |
+| ≥ HL mode trigger threshold (default $800K) | Recommend switch to HL_MODE / auto-switch if enabled + hedge reminder |
+
+> **Auto-switch is off by default.** Admin must explicitly enable it. When enabled, the system automatically switches mode when thresholds are crossed and sends a notification.
+
+### Hedge Reminder in HL Mode
+
+When HL_MODE is activated, the admin panel displays a prominent alert:
+> ⚠️ Net exposure has reached the high-risk threshold. System has switched to Hyperliquid Mode. Please hedge on Hyperliquid immediately!
+
+A Slack notification is also sent to the Risk Manager with the current net exposure value and recommended hedge size.
 
 ## Hedging Strategy
 

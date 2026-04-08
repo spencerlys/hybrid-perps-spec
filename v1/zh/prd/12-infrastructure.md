@@ -53,7 +53,8 @@ phase: Phase 1
 |------|---------|
 | `hedge_positions` | id, symbol, direction, size, entry_price, hl_position_id |
 | `reconciliation_logs` | id, dimension, expected, actual, deviation_rate, status |
-| `routing_config` | symbol, threshold, enabled, updated_at |
+| `routing_config` | symbol, routing_mode (HL_MODE/NORMAL_MODE/BETTING_MODE), normal_threshold, betting_threshold, hl_mode_exposure_threshold, betting_mode_exposure_threshold, auto_switch_enabled, updated_at |
+| `routing_mode_logs` | id, from_mode, to_mode, trigger (MANUAL/AUTO), operator_id, net_exposure_at_switch, created_at |
 | `risk_config` | key, value, updated_by, updated_at |
 
 ## 可观测性

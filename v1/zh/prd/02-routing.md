@@ -1,8 +1,8 @@
 ---
 doc_id: prd-zh-routing
-title: L2 订单路由层 — 路由规则、阈值、平仓路由
-tags: [routing, order, threshold, hyperliquid, internal, L2]
-version: 1.0
+title: L2 订单路由层 — 三模式路由、阈值、平仓路由
+tags: [routing, order, threshold, hyperliquid, internal, routing-mode, L2]
+version: 1.1
 lang: zh
 updated: 2026-04-08
 phase: Phase 2
@@ -10,16 +10,37 @@ phase: Phase 2
 
 # L2 订单路由层
 
+## 路由模式总览
+
+系统支持三种路由模式，由后台管理员控制，详见 [11-admin.md](11-admin.md)。
+
+| 模式 | 触发场景 | 路由行为 |
+|------|---------|---------|
+| `HL_MODE`（Hyperliquid 模式） | 净敞口过大，风险过高 | 所有新开仓 → HL，不进入对赌 |
+| `NORMAL_MODE`（正常模式，默认） | 净敞口在合理范围 | 按正常阈值路由 |
+| `BETTING_MODE`（对赌模式） | 净敞口过小，多空平衡 | 按对赌阈值（更高）路由 |
+
 ## 路由决策逻辑
 
 ```
 名义价值 = 订单数量 × 当前 HL 标记价格
 
-名义价值 ≤ 路由阈值（默认 $10,000）
-  └─► 平台对赌（L3 内部执行）
+switch (当前路由模式):
 
-名义价值 > 路由阈值
-  └─► 转发至 Hyperliquid（L4 代理执行）
+  case HL_MODE:
+    → 所有新开仓订单 → HYPERLIQUID（无论金额大小）
+
+  case NORMAL_MODE:
+    if 名义价值 ≤ 正常模式阈值（默认 $10,000）
+      → INTERNAL（平台对赌）
+    else
+      → HYPERLIQUID
+
+  case BETTING_MODE:
+    if 名义价值 ≤ 对赌模式阈值（默认 $50,000）
+      → INTERNAL（平台对赌）
+    else
+      → HYPERLIQUID
 ```
 
 路由决策延迟目标：< 5ms P99
@@ -27,14 +48,19 @@ phase: Phase 2
 ## 路由规则细节
 
 ### 阈值配置
-- 默认全局阈值：$10,000
-- 支持按币种单独设置阈值（如 BTC $10K、DOGE $5K）
+
+| 配置项 | 默认值 | 适用模式 |
+|--------|--------|---------|
+| 正常模式路由阈值 | $10,000 | NORMAL_MODE |
+| 对赌模式路由阈值 | $50,000 | BETTING_MODE |
+
+- 支持按币种单独设置阈值覆盖全局值
 - 可在后台实时修改，无需重启服务
 - 每笔订单独立判断，不累计
 
 ### 同币种同方向多次开仓示例
 
-> 阈值 $10,000：
+> 正常模式，阈值 $10,000：
 > - 第一次 BTC 多头 $5,000 → 对赌（INTERNAL）
 > - 第二次 BTC 多头 $15,000 → HL（HYPERLIQUID）
 >
@@ -42,14 +68,14 @@ phase: Phase 2
 > - 逐仓模式：两个仓位各自独立清算
 > - 全仓模式：两个仓位共享账户余额，清算在账户层面统一计算
 
-### 强制路由到 HL（即使金额 ≤ 阈值）
+### 强制路由到 HL（所有模式共享，优先级最高）
 
 | 约束条件 | 说明 |
 |---------|------|
-| 该币种净敞口达上限 | 停止新增对赌 |
 | 波动率异常（>5%/小时） | 极端行情下不对赌 |
 | HL 对冲通道异常（延迟 >500ms） | 无法对冲时保守走 HL |
-| 后台手动关闭 | 一键暂停全部对赌 |
+
+> 注意：路由模式本身已覆盖"净敞口达上限"和"手动关闭对赌"的场景，不再作为独立约束条件。
 
 ## 平仓路由规则
 
@@ -80,5 +106,7 @@ phase: Phase 2
 - 订单 ID
 - 名义价值
 - 路由结果（INTERNAL / HYPERLIQUID）
+- 当前路由模式（`routing_mode`：HL_MODE / NORMAL_MODE / BETTING_MODE）
+- 使用的阈值
 - 决策延迟（毫秒）
 - 触发条件（阈值规则 / 强制 HL 原因）

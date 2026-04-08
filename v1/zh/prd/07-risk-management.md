@@ -1,8 +1,8 @@
 ---
 doc_id: prd-zh-risk-management
-title: L6 风控与敞口管理层 — 净敞口、对冲策略、风险准备金
-tags: [risk, exposure, hedge, reserve, monitoring, L6]
-version: 1.0
+title: L6 风控与敞口管理层 — 净敞口、路由模式联动、对冲策略、风险准备金
+tags: [risk, exposure, hedge, reserve, monitoring, routing-mode, L6]
+version: 1.1
 lang: zh
 updated: 2026-04-08
 phase: Phase 3
@@ -26,6 +26,25 @@ BTC 净敞口 = Σ(用户 BTC 多头 INTERNAL 名义价值)
 - 接近零 → 多空平衡，风险低
 
 > HL 仓位不计入净敞口，因为 HL 仓位的盈亏由 HL 处理，平台无方向性风险。
+
+## 净敞口与路由模式联动
+
+净敞口实时计算结果会驱动路由模式的建议切换。净敞口阈值在后台可配置（详见 [11-admin.md](11-admin.md)）。
+
+| 净敞口绝对值 | 系统动作 |
+|------------|---------|
+| ≤ 对赌模式触发阈值（默认 $50K） | 建议切换到对赌模式 / 自动切换（若已开启） |
+| 在两阈值之间 | 维持正常模式，无动作 |
+| ≥ HL 模式触发阈值（默认 $800K） | 建议切换到 HL 模式 / 自动切换（若已开启）+ 对冲提醒 |
+
+> **"自动切换"默认关闭**，需管理员主动开启。开启后系统触达阈值时自动切换模式并发送通知。
+
+### HL 模式下的对冲提醒
+
+切换到 HL 模式后，后台显示醒目告警：
+> ⚠️ 当前净敞口已触达高风险阈值，已切换到 Hyperliquid 模式。请尽快到 Hyperliquid 进行对冲！
+
+同时向 Risk Manager 发送 Slack 通知，包含当前净敞口数值和建议对冲量。
 
 ## 对冲策略
 
