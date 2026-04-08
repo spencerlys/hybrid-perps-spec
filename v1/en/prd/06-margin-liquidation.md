@@ -97,7 +97,7 @@ Available = Wallet Balance - Σ(isolated margins) + Σ(cross unrealized PnL)
 
 ## Unified Liquidation Engine
 
-Applies to both INTERNAL and HYPERLIQUID positions. XBIT is the sole liquidation authority.
+Applies to both INTERNAL and HYPERLIQUID positions. Platform is the sole liquidation authority.
 
 ### Detection
 - Trigger: mark price update → check all affected positions

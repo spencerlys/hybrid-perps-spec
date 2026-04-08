@@ -50,7 +50,7 @@ BTC Net Exposure = Σ(user BTC long INTERNAL notional)
 |--------|-------------|
 | Platform initial injection | Pre-launch capital; recommend ≥ $500K |
 | Client loss allocation | 20% of each INTERNAL client loss auto-transferred |
-| Drift fallback deduction | Deducted when HL actual loss > XBIT calculated loss |
+| Drift fallback deduction | Deducted when HL actual loss > Platform calculated loss |
 | Periodic top-up | Replenished from operating profit when below safety threshold |
 
 ### Client Loss Allocation

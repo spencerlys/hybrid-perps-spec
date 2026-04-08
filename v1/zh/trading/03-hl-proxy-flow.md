@@ -79,14 +79,14 @@ L2 路由决策 → HYPERLIQUID
       │
       ▼
 [L8] 偏差计算与记录
-     ├─ 偏差 = HL 回执 PnL - XBIT 预计算 PnL
+     ├─ 偏差 = HL 回执 PnL - 平台 预计算 PnL
      ├─ 偏差 > $10 → 写 deviation_logs
      ├─ 偏差率 > 1% → Slack 告警
      └─ 偏差率 > 5% → P0 + 暂停该币种 HL 路由
       │
       ▼
-[L8] 偏差兜底（若 HL 实际亏损 > XBIT 计算）
-     └─ 差额从风险准备金扣除，用户按 XBIT 计算结果结算
+[L8] 偏差兜底（若 HL 实际亏损 > 平台 计算）
+     └─ 差额从风险准备金扣除，用户按 平台 计算结果结算
       │
       ▼
 [L4] 释放用户保证金 → position.status = CLOSED
@@ -115,7 +115,7 @@ Fill 3：price=$100,000，size=0.2
 ## HL 清算触发流程
 
 ```
-[L5] XBIT 清算引擎判断用户需要清算（含 HYPERLIQUID 仓位）
+[L5] 平台 清算引擎判断用户需要清算（含 HYPERLIQUID 仓位）
       │
       ▼
 [L4] 向 HL 发送市价平仓指令

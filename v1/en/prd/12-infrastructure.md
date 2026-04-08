@@ -106,7 +106,7 @@ phase: Phase 1
 2. Continue monitoring existing positions (use last valid price)
 3. After recovery: full HL position state sync + consistency check
 
-**XBIT Service Outage:**
+**Platform Service Outage:**
 1. Switch to standby region
 2. Restore from latest DB snapshot
 3. Rebuild Redis cache from DB

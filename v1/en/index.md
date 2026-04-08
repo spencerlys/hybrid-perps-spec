@@ -1,12 +1,12 @@
 ---
 doc_id: v1-en-index
-title: XBIT Perpetual Futures Engine — Master Document Index
+title: Perpetual Futures Engine — Master Document Index
 version: 1.0
 lang: en
 updated: 2026-04-08
 ---
 
-# XBIT Perpetual Futures Engine · Master Document Index
+# Perpetual Futures Engine · Master Document Index
 
 > **Version**: v1.0 | **Status**: Active | **Language**: English (translated from Chinese) | **Updated**: 2026-04-08
 
@@ -26,13 +26,13 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 
 ## Core Architecture Principles
 
-**XBIT is the sole risk controller and liquidation authority. Hyperliquid (HL) is only an execution channel.**
+**Platform is the sole risk controller and liquidation authority. Hyperliquid (HL) is only an execution channel.**
 
 | Principle | Description |
 |-----------|-------------|
 | Dual Routing | ≤$10K → Platform internalized (INTERNAL); >$10K → Hyperliquid (HYPERLIQUID) |
 | Dual Position | INTERNAL and HYPERLIQUID positions can coexist for the same user |
-| Unified Liquidation | All liquidation decisions made by XBIT, regardless of position location |
+| Unified Liquidation | All liquidation decisions made by Platform, regardless of position location |
 | Data Reuse | Prices, funding rates, leverage, and listed assets all sourced from HL |
 
 ---
@@ -91,7 +91,7 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 | Client Loss (客损) | User loss = platform's counterparty gain |
 | Routing Threshold | Notional value cutoff (default $10,000) |
 | Net Exposure | Platform's accumulated directional risk per asset (INTERNAL only) |
-| Calculation Drift | Difference between XBIT's calculated PnL and HL's actual PnL |
+| Calculation Drift | Difference between Platform's calculated PnL and HL's actual PnL |
 | Aggregation | Moving assets from user deposit addresses to platform hot wallet |
 | Hot Wallet | Online-signing wallet for daily withdrawals |
 | Cold Wallet | Offline-signing wallet for large fund storage |

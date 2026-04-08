@@ -98,7 +98,7 @@ User initiates close (full / partial)
 
 ```
 L7 real-time mark_price push
-XBIT scans all TP/SL orders
+Platform scans all TP/SL orders
 Price touches TP/SL level → trigger close
 Execution path same as above (INTERNAL / HYPERLIQUID handled separately)
 ```

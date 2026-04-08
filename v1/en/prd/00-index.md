@@ -1,13 +1,13 @@
 ---
 doc_id: prd-en-index
-title: XBIT Perp Engine PRD v1.0 — Document Index
+title: Perp Engine PRD v1.0 — Document Index
 tags: [index, overview, prd]
 version: 1.0
 lang: en
 updated: 2026-04-08
 ---
 
-# XBIT Perp Engine PRD v1.0 — Product Requirements Index
+# Perp Engine PRD v1.0 — Product Requirements Index
 
 > **v1.0** | Translated from authoritative Chinese source: [../../zh/prd/00-index.md](../../zh/prd/00-index.md)
 
@@ -32,12 +32,12 @@ Each file covers one independent module and can be read standalone.
 
 ## Core Architecture Principles
 
-**XBIT is the sole risk controller and liquidation authority. HL is only an execution channel.**
+**Platform is the sole risk controller and liquidation authority. HL is only an execution channel.**
 
-- XBIT maintains complete position records per user (both INTERNAL and HYPERLIQUID)
-- XBIT uses HL mark prices to compute margin ratios and liquidation conditions
+- Platform maintains complete position records per user (both INTERNAL and HYPERLIQUID)
+- Platform uses HL mark prices to compute margin ratios and liquidation conditions
 - INTERNAL positions: settled internally; platform earns client losses
-- HYPERLIQUID positions: XBIT triggers timing → sends close order to HL
+- HYPERLIQUID positions: Platform triggers timing → sends close order to HL
 - Platform HL account always maintains excess margin to prevent HL from liquidating it
 
 ## Glossary
@@ -50,7 +50,7 @@ Each file covers one independent module and can be read standalone.
 | Client Loss | User loss = platform's counterparty gain (core B-book revenue) |
 | Routing Threshold | Notional value cutoff (default $10,000 per order) |
 | Net Exposure | Platform's accumulated directional risk per asset (INTERNAL only) |
-| Calculation Drift | Delta between XBIT's computed PnL and HL's actual PnL |
+| Calculation Drift | Delta between Platform's computed PnL and HL's actual PnL |
 | Aggregation | Moving assets from user deposit addresses into platform hot wallet |
 | Hot Wallet | Online-signing wallet for daily withdrawal processing |
 | Cold Wallet | Offline-signing wallet for secure storage of large balances |

@@ -56,7 +56,7 @@ Every balance mutation must record its type: deposit, withdrawal, open-freeze, c
 
 1. Each user gets a unique deposit address per chain (Turnkey-managed private key)
 2. On-chain block scanner detects incoming transactions
-3. After required confirmations: credit user's XBIT internal balance
+3. After required confirmations: credit user's Platform internal balance
 4. Trigger aggregation evaluation
 
 ## Multi-Chain Asset Aggregation

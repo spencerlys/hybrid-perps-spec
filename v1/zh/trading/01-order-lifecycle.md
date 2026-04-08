@@ -98,7 +98,7 @@ L6 净敞口实时更新（检查对冲阈值）
 
 ```
 L7 实时推送 mark_price
-XBIT 扫描所有 TP/SL 订单
+平台 扫描所有 TP/SL 订单
 价格触达 TP/SL 价格 → 触发平仓
 执行路径同上（INTERNAL / HYPERLIQUID 分别处理）
 ```

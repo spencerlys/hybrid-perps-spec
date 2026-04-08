@@ -1,13 +1,13 @@
 ---
 doc_id: prd-zh-index
-title: XBIT Perp Engine PRD v1.0 — 文档索引
+title: Perp Engine PRD v1.0 — 文档索引
 tags: [index, overview, prd]
 version: 1.0
 lang: zh
 updated: 2026-04-08
 ---
 
-# XBIT Perp Engine PRD v1.0 — 产品需求文档索引
+# Perp Engine PRD v1.0 — 产品需求文档索引
 
 > **v1.0 正式版** | 权威版本（中文）| 上级索引：[../index.md](../index.md)
 
@@ -32,12 +32,12 @@ updated: 2026-04-08
 
 ## 核心架构原则
 
-**XBIT 是唯一的风控和清算主体，HL 仅是执行通道。**
+**平台 是唯一的风控和清算主体，HL 仅是执行通道。**
 
-- XBIT 内部维护每个用户的完整仓位表（含 INTERNAL 和 HYPERLIQUID 两类）
-- XBIT 用 HL 标记价格，自行计算保证金率和清算条件
+- 平台 内部维护每个用户的完整仓位表（含 INTERNAL 和 HYPERLIQUID 两类）
+- 平台 用 HL 标记价格，自行计算保证金率和清算条件
 - INTERNAL 仓位：内部结算，平台赚取客损
-- HYPERLIQUID 仓位：XBIT 判断触发时机 → 向 HL 发平仓指令
+- HYPERLIQUID 仓位：平台 判断触发时机 → 向 HL 发平仓指令
 - 平台 HL 账户始终保持超额保证金，确保 HL 永远不会主动清算平台仓位
 
 ## 术语表
@@ -50,7 +50,7 @@ updated: 2026-04-08
 | 客损 | 用户亏损时平台作为对手方的收益 |
 | 路由阈值 | 订单名义价值分界线（默认 $10,000） |
 | 净敞口 | 平台在某币种上因对赌累积的方向性风险总和 |
-| 计算偏差 | XBIT 计算 PnL 与 HL 实际 PnL 的差额 |
+| 计算偏差 | 平台 计算 PnL 与 HL 实际 PnL 的差额 |
 | 归集 | 将分散在各链用户充值地址的资产转入平台热钱包 |
 | 热钱包 | 在线签名钱包，用于日常提现出金 |
 | 冷钱包 | 离线签名钱包，用于大额资金安全存储 |

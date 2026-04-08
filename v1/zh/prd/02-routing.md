@@ -54,7 +54,7 @@ phase: Phase 2
 ## 平仓路由规则
 
 **强制跟随仓位归属：**
-- INTERNAL 仓位 → 只能在 XBIT 内部平仓
+- INTERNAL 仓位 → 只能在 平台 内部平仓
 - HYPERLIQUID 仓位 → 只能向 HL 发平仓指令
 
 不允许跨系统平仓（不允许用 INTERNAL 额度抵消 HL 仓位）。

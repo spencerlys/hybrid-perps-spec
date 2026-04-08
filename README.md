@@ -1,8 +1,10 @@
-# XBIT 永续合约交易引擎 — 产品文档库
+# Hybrid Perps Spec — 产品文档库
 
-> **XBIT Perpetual Futures Trading Engine — Product Documentation Repository**
+> **Hybrid Perpetual Futures Engine — Product Documentation Repository**
+>
+> 📦 [`github.com/spencerlys/hybrid-perps-spec`](https://github.com/spencerlys/hybrid-perps-spec)
 
-本仓库是 XBIT 永续合约交易引擎的**产品规格与设计文档**。不包含实现代码，仅包含 PRD、业务场景记录和交易流程说明。
+本仓库是 永续合约交易引擎的**产品规格与设计文档**。不包含实现代码，仅包含 PRD、业务场景记录和交易流程说明。
 
 ---
 
@@ -80,13 +82,13 @@ v1/
 
 ## 核心架构概念 / Key Concepts
 
-**XBIT 是唯一的风控和清算主体，Hyperliquid（HL）仅是执行通道。**
+**平台 是唯一的风控和清算主体，Hyperliquid（HL）仅是执行通道。**
 
 | 原则 | 说明 |
 |------|------|
 | **双路由** | 订单金额 ≤$10K → 平台对赌（INTERNAL）；>$10K → Hyperliquid |
 | **双仓位** | 同一用户可同时持有 INTERNAL 和 HYPERLIQUID 仓位 |
-| **统一清算** | 所有清算决策由 XBIT 做出，与仓位所在系统无关 |
+| **统一清算** | 所有清算决策由 平台 做出，与仓位所在系统无关 |
 | **数据复用** | 价格、资金费、杠杆参数全部来自 HL，不自建行情系统 |
 
 ### 术语表
@@ -98,7 +100,7 @@ v1/
 | 路由阈值 | 订单名义价值分界线（默认 $10,000） |
 | 净敞口 | 平台在某资产上的方向性风险敞口（仅 INTERNAL） |
 | 客损 | 用户亏损时平台的对赌收益（核心 B-Book 收入） |
-| 计算偏差 | XBIT 计算 PnL 与 HL 实际 PnL 的差额 |
+| 计算偏差 | 平台 计算 PnL 与 HL 实际 PnL 的差额 |
 
 ---
 

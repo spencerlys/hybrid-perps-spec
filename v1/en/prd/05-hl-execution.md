@@ -20,7 +20,7 @@ Hyperliquid constraint: **one position per asset per direction per account.** Mu
 |----------------|--------|--------|
 | Account count | One unified platform account | HL does not support multiple positions per asset |
 | HL margin mode | Cross Margin | Mandatory for merged positions; better capital efficiency |
-| HL liquidation | Never allow HL to liquidate | All liquidations controlled by XBIT |
+| HL liquidation | Never allow HL to liquidate | All liquidations controlled by Platform |
 
 ### HL Account Margin Ratio Management
 
@@ -31,11 +31,11 @@ Hyperliquid constraint: **one position per asset per direction per account.** Mu
 
 ## HL Virtual Position Mapping
 
-XBIT maintains per-user virtual position records (HL sees a single merged position):
+Platform maintains per-user virtual position records (HL sees a single merged position):
 
 | Field | Description |
 |-------|-------------|
-| position_id | XBIT internal position ID |
+| position_id | Platform internal position ID |
 | user_id | User |
 | symbol | Contract symbol |
 | direction | User's direction |
@@ -52,14 +52,14 @@ XBIT maintains per-user virtual position records (HL sees a single merged positi
 
 ### Core Principle
 
-**XBIT does not use self-estimated prices as the final position record. HL's actual fill price always overrides the internal estimate.**
+**Platform does not use self-estimated prices as the final position record. HL's actual fill price always overrides the internal estimate.**
 
 This is the key mechanism for eliminating open/close-phase calculation drift.
 
 ### Open Position Correction
 
 ```
-1. XBIT estimates cost → temporarily freezes margin using mark_price
+1. Platform estimates cost → temporarily freezes margin using mark_price
 2. Send open order to HL
 3. HL returns fill receipt: fill_price, filled_size, fee
 4. Replace entry_price with fill_price
@@ -70,7 +70,7 @@ This is the key mechanism for eliminating open/close-phase calculation drift.
 ### Close Position Correction
 
 ```
-1. XBIT decides to close → send market close order to HL
+1. Platform decides to close → send market close order to HL
 2. HL returns close receipt: close_price, filled_size, fee
 3. Compute realized PnL using close_price (not the estimate)
 4. Release margin based on close_price result
@@ -96,12 +96,12 @@ HL market orders may fill in multiple parts:
 ### Drift Fallback
 
 ```
-HL actual loss > XBIT calculated loss:
-  → delta = HL_actual_loss - XBIT_calculated_loss
+HL actual loss > Platform calculated loss:
+  → delta = HL_actual_loss - Platform_calculated_loss
   → Deduct delta from risk reserve
-  → User settled at XBIT's calculated value (no user impact)
+  → User settled at Platform's calculated value (no user impact)
 
-HL actual loss < XBIT calculated loss:
+HL actual loss < Platform calculated loss:
   → Delta becomes platform profit (or returned to user — business decision)
 ```
 

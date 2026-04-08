@@ -68,7 +68,7 @@ By position type:
   │
   └─ HYPERLIQUID:
       ├─ HL settles on platform HL account (automatic)
-      └─ XBIT mirrors same amount to user account
+      └─ Platform mirrors same amount to user account
       │
       ▼
 Write to funding_settlements table
@@ -77,7 +77,7 @@ Write to funding_settlements table
 [L5] Update liquidation price (funding erodes margin → liq price moves adversely)
       │
       ▼
-[L8] Reconciliation check (XBIT mirror total vs HL actual settlement)
+[L8] Reconciliation check (Platform mirror total vs HL actual settlement)
 ```
 
 ## 3. Liquidation Detection & Execution Flow
@@ -141,7 +141,7 @@ Daily:
 | Exception | Handling |
 |-----------|---------|
 | HL receipt timeout | Retry 3x; if still no receipt → P0 alert + manual handling |
-| XBIT vs HL PnL drift > 5% | Halt HL routing for this asset + P0 alert + risk review |
+| Platform vs HL PnL drift > 5% | Halt HL routing for this asset + P0 alert + risk review |
 | User asset reconciliation deviation > 0.1% | Halt withdrawals + P0 alert + manual audit |
 | Risk reserve < $200K | Halt all INTERNAL positions (route everything to HL) |
 | HL account margin ratio < 150% | Halt new HL opens + emergency capital top-up |

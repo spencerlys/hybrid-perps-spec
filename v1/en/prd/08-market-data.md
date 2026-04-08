@@ -12,7 +12,7 @@ phase: Phase 1
 
 ## Data Sources
 
-All market data in MVP comes from Hyperliquid. XBIT adapts format and passes through.
+All market data in MVP comes from Hyperliquid. Platform adapts format and passes through.
 
 ## Real-Time Data (WebSocket)
 
@@ -27,7 +27,7 @@ All market data in MVP comes from Hyperliquid. XBIT adapts format and passes thr
 
 ### WebSocket Multiplexing
 - Upstream: single HL WebSocket connection
-- Downstream: serve multiple XBIT clients
+- Downstream: serve multiple Platform clients
 - Reference-counted subscriptions: upstream subscription cancelled only when last client disconnects
 - Heartbeat + auto-reconnect with exponential backoff (max 30s)
 
@@ -55,7 +55,7 @@ Usage:
 
 ## HL Mark Price
 
-**XBIT does not compute mark price. It uses HL's pushed mark price directly.**
+**Platform does not compute mark price. It uses HL's pushed mark price directly.**
 
 - HL mark price = oracle_price × (1 + impact funding premium)
 - Received via `allMids` WebSocket subscription
@@ -63,7 +63,7 @@ Usage:
 
 ### Mark Price Latency Monitoring
 ```
-End-to-end latency = HL generation → XBIT receive → user display
+End-to-end latency = HL generation → Platform receive → user display
 
 Alert: > 200ms
 Critical: > 500ms → Pause internalization (no internalization during data lag)
@@ -72,8 +72,8 @@ Critical: > 500ms → Pause internalization (no internalization during data lag)
 ## Funding Rate Pass-Through
 - Source: HL, never self-computed
 - Settlement period: every 8 hours (UTC 00:00, 08:00, 16:00)
-- INTERNAL positions: mirror HL rate; XBIT platform is the counterparty
-- HYPERLIQUID positions: HL settles on platform account; XBIT mirrors amount to user
+- INTERNAL positions: mirror HL rate; Platform platform is the counterparty
+- HYPERLIQUID positions: HL settles on platform account; Platform mirrors amount to user
 
 See [09-settlement.md](09-settlement.md) for full funding settlement formulas.
 
@@ -100,4 +100,4 @@ Recover: resume after N consecutive normal updates
 
 ### Data Consistency Check
 - Sequence number check: gap detected → trigger full snapshot rebuild
-- Periodic comparison: every 5 minutes compare XBIT cached prices vs HL REST API
+- Periodic comparison: every 5 minutes compare Platform cached prices vs HL REST API

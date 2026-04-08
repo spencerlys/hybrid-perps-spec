@@ -25,7 +25,7 @@ Liq Price = 80,000 × (1 - 800/8,000 + 0.004) = 80,000 × 0.904 = $72,320
 
 **Steps:**
 1. HL mark price drops to $72,300 (below liq price $72,320)
-2. XBIT liquidation engine detects trigger (target: < 1s)
+2. Platform liquidation engine detects trigger (target: < 1s)
 3. Settle internally at HL mark price $72,300
 
 **Expected Results:**
@@ -50,14 +50,14 @@ Liq Price = 4,000 × (1 + 4,000/20,000 - 0.005) = 4,000 × 1.195 = $4,780
 
 **Steps:**
 1. HL mark price rises to $4,790 (above liq price)
-2. XBIT liquidation engine detects trigger
+2. Platform liquidation engine detects trigger
 3. Send market close instruction to HL (size=5 ETH)
 4. Await HL fill receipt (close_price)
 
 **Expected Results:**
 - HL returns close_price (e.g. $4,792 with slippage)
 - Realized PnL computed using close_price
-- If HL actual loss > XBIT estimate → delta deducted from risk reserve
+- If HL actual loss > Platform estimate → delta deducted from risk reserve
 - User margin zeroed
 - HL platform merged position reduced by corresponding ETH amount
 

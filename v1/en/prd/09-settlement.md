@@ -78,7 +78,7 @@ Internal ledger adjustment only
 **HYPERLIQUID:**
 ```
 HL settles on platform HL account (automatic)
-XBIT mirrors same amount to user account:
+Platform mirrors same amount to user account:
   User owed funding → deduct from available_balance
   User receives funding → add to available_balance
 ```
@@ -92,7 +92,7 @@ XBIT mirrors same amount to user account:
 | INTERNAL liquidation | Margin zeroed → 80% platform profit + 20% reserve |
 | HL open | Freeze user margin + open on HL platform account |
 | HL close | Send close to HL → await receipt → settle at close_price → release margin |
-| HL liquidation | XBIT triggers → send close → await receipt → user margin zeroed |
+| HL liquidation | Platform triggers → send close → await receipt → user margin zeroed |
 | Funding | Every 8h settle all open positions (INTERNAL + HL mirror) |
 | Trading fee | Deduct from available_balance on open/close |
 
@@ -101,14 +101,14 @@ XBIT mirrors same amount to user account:
 Applies only when a HYPERLIQUID position is closed/liquidated:
 
 ```
-drift = HL receipt actual PnL - XBIT pre-calculated PnL
+drift = HL receipt actual PnL - Platform pre-calculated PnL
 
-if drift > 0 (HL actual loss > XBIT calc):
+if drift > 0 (HL actual loss > Platform calc):
   → Deduct delta from risk reserve
-  → User settled at XBIT calculated value (no user impact)
+  → User settled at Platform calculated value (no user impact)
   → Record in deviation_logs
 
-if drift < 0 (HL actual loss < XBIT calc):
+if drift < 0 (HL actual loss < Platform calc):
   → Delta goes to platform profit
   → Record in deviation_logs
 ```

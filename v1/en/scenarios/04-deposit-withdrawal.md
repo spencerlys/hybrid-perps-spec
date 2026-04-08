@@ -22,11 +22,11 @@ related-prd: [prd/03-account-assets.md, prd/10-withdrawal-liquidity.md]
 1. On-chain block scanner detects incoming transaction
 2. Waiting for confirmations (19 required on TRON)
 3. 19th confirmation reached
-4. Credit user XBIT internal balance: +$1,000
+4. Credit user Platform internal balance: +$1,000
 5. Evaluate aggregation: is address balance above aggregation threshold?
 
 **Expected Results:**
-- User XBIT account balance +$1,000
+- User Platform account balance +$1,000
 - deposits table: status=COMPLETED, confirmations=19
 - balance_logs entry: type = "deposit"
 - If address balance > aggregation threshold → trigger aggregation to hot wallet

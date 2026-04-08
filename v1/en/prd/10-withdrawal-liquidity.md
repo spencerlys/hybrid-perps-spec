@@ -23,7 +23,7 @@ User Net Deposit = Σ(all deposits) - Σ(all withdrawals)
 Platform Total Liability = Σ(all user wallet balances)
 ```
 
-`Platform Total Liability` = total funds the platform owes users (sum of all XBIT internal balances).
+`Platform Total Liability` = total funds the platform owes users (sum of all Platform internal balances).
 
 ### Liquidity Safety Ratio
 

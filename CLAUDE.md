@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-This is the **XBIT Perpetual Futures Trading Engine** — currently in the specification phase. The full MVP design spec is at `docs/superpowers/specs/2026-03-28-perpengine-design.md`. No implementation code exists yet.
+This is the **Platform Perpetual Futures Trading Engine** — currently in the specification phase. The full MVP design spec is at `docs/superpowers/specs/2026-03-28-perpengine-design.md`. No implementation code exists yet.
 
 ## What This System Is
 
-XBIT is a perpetual futures trading platform that sits in front of Hyperliquid (HL). The core strategy:
-- **Small orders (≤$10K notional)**: Platform acts as counterparty ("internalized"). Users trade against XBIT's own capital. User losses = platform revenue.
-- **Large orders (>$10K notional)**: Forwarded to Hyperliquid. XBIT earns builder fees.
+Platform is a perpetual futures trading platform that sits in front of Hyperliquid (HL). The core strategy:
+- **Small orders (≤$10K notional)**: Platform acts as counterparty ("internalized"). Users trade against Platform's own capital. User losses = platform revenue.
+- **Large orders (>$10K notional)**: Forwarded to Hyperliquid. Platform earns builder fees.
 
-XBIT is the sole risk controller and liquidation authority. HL is only an execution channel.
+Platform is the sole risk controller and liquidation authority. HL is only an execution channel.
 
 ## System Architecture (9 Layers)
 
@@ -45,7 +45,7 @@ Users can hold positions simultaneously in two systems: **INTERNAL** (small orde
 - Mixed mode is supported: user can have some isolated and some cross positions simultaneously
 
 ### Liquidation Control
-Regardless of position location (INTERNAL or HYPERLIQUID), XBIT always:
+Regardless of position location (INTERNAL or HYPERLIQUID), Platform always:
 1. Detects liquidation trigger using HL mark prices (<1s latency required)
 2. For INTERNAL positions: settle internally (platform captures user loss)
 3. For HYPERLIQUID positions: send market close order to HL

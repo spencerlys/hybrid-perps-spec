@@ -79,14 +79,14 @@ User initiates close of HYPERLIQUID position
       │
       ▼
 [L8] Drift calculation and logging
-     ├─ drift = HL receipt PnL - XBIT pre-calculated PnL
+     ├─ drift = HL receipt PnL - Platform pre-calculated PnL
      ├─ drift > $10 → write to deviation_logs
      ├─ drift rate > 1% → Slack alert
      └─ drift rate > 5% → P0 + halt HL routing for this asset
       │
       ▼
-[L8] Drift fallback (if HL actual loss > XBIT calculated)
-     └─ Deduct delta from risk reserve; settle user at XBIT calculated value
+[L8] Drift fallback (if HL actual loss > Platform calculated)
+     └─ Deduct delta from risk reserve; settle user at Platform calculated value
       │
       ▼
 [L4] Release user margin → position.status = CLOSED
@@ -115,7 +115,7 @@ Volume-weighted average entry_price:
 ## HL-Position Liquidation Flow
 
 ```
-[L5] XBIT liquidation engine determines liquidation needed (HYPERLIQUID position)
+[L5] Platform liquidation engine determines liquidation needed (HYPERLIQUID position)
       │
       ▼
 [L4] Send market close order to HL

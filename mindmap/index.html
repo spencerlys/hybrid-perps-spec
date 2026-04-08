@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XBIT Perp Engine — 全模块架构脑图</title>
+<title>Perp Engine — 全模块架构脑图</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; color: #e0e0e0; overflow: hidden; }
@@ -97,7 +97,7 @@
 <div id="app">
   <div id="sidebar">
     <div id="sidebar-header">
-      <h2>XBIT Perp Engine</h2>
+      <h2>Perp Engine</h2>
       <p>方案 2: 内部对赌 + 阈值对冲</p>
     </div>
     <div id="layer-list"></div>
@@ -134,7 +134,7 @@ const DATA = {
           details: [
             { title: "市场元数据代理", desc: "meta, metaAndAssetCtxs, spotMeta → 转发 HL 并缓存", tags: ["api"] },
             { title: "价格数据代理", desc: "allMids, l2Book, candleSnapshot → 低延迟转发", tags: ["api"] },
-            { title: "用户数据代理", desc: "clearinghouseState, activeAssetData, userFees → 替换为 XBIT 内部数据（Phase 3）", tags: ["api"] },
+            { title: "用户数据代理", desc: "clearinghouseState, activeAssetData, userFees → 替换为 平台 内部数据（Phase 3）", tags: ["api"] },
             { title: "交易历史代理", desc: "userFills, userFillsByTime, historicalOrders, userFunding → 合并内部+HL 记录", tags: ["api"] },
             { title: "资金数据代理", desc: "userNonFundingLedgerUpdates, portfolio → 统一账本视图", tags: ["api"] },
             { title: "响应格式适配器", desc: "保持与 HL 完全一致的 JSON 结构，前端零改动", tags: ["internal"] },
@@ -149,7 +149,7 @@ const DATA = {
             { title: "用户数据流代理", desc: "webData2, userFills, userHistoricalOrders, activeAssetData → Phase 3 后注入内部数据", tags: ["ws"] },
             { title: "连接管理", desc: "多路复用: 一个上游 HL WS 连接服务多个下游客户端; 心跳检测; 自动重连", tags: ["ws"] },
             { title: "订阅管理", desc: "客户端 subscribe/unsubscribe → 聚合后向 HL 发送; 引用计数避免重复订阅", tags: ["ws"] },
-            { title: "延迟监控", desc: "实时监测 HL→XBIT→Client 全链路延迟; >500ms 触发告警", tags: ["internal"] },
+            { title: "延迟监控", desc: "实时监测 HL→平台→Client 全链路延迟; >500ms 触发告警", tags: ["internal"] },
           ]
         },
         {
@@ -158,8 +158,8 @@ const DATA = {
           details: [
             { title: "下单代理", desc: "order action → Phase 1 直接转发 HL; Phase 2 后经路由引擎决策", tags: ["api"] },
             { title: "撤单代理", desc: "cancel action → 判断订单归属(INTERNAL/HL)后分别处理", tags: ["api"] },
-            { title: "签名验证层", desc: "前端 EIP-712 签名 → XBIT 验证后用平台 Agent 密钥代签 HL 请求", tags: ["api"] },
-            { title: "Builder Fee 注入", desc: "所有转发 HL 的订单自动注入 XBIT builder fee (0.02%)", tags: ["internal"] },
+            { title: "签名验证层", desc: "前端 EIP-712 签名 → 平台 验证后用平台 Agent 密钥代签 HL 请求", tags: ["api"] },
+            { title: "Builder Fee 注入", desc: "所有转发 HL 的订单自动注入 平台 builder fee (0.02%)", tags: ["internal"] },
             { title: "请求限流", desc: "per-user & global rate limiting; 防刷单; 防 DDoS", tags: ["internal"] },
           ]
         },
@@ -174,8 +174,8 @@ const DATA = {
           name: "用户账户系统", desc: "注册 / 登录 / 身份管理",
           phase: 1,
           details: [
-            { title: "Web2 注册", desc: "邮箱/手机号注册 → OTP 验证 → 创建 XBIT 账户", tags: ["api"] },
-            { title: "Web3 钱包登录", desc: "MetaMask / WalletConnect 签名验证 → 绑定 XBIT 账户", tags: ["api"] },
+            { title: "Web2 注册", desc: "邮箱/手机号注册 → OTP 验证 → 创建 平台 账户", tags: ["api"] },
+            { title: "Web3 钱包登录", desc: "MetaMask / WalletConnect 签名验证 → 绑定 平台 账户", tags: ["api"] },
             { title: "Turnkey 密钥托管", desc: "为每个用户通过 Turnkey HSM 创建内部钱包地址", tags: ["internal"] },
             { title: "KYC/AML 接口预留", desc: "身份验证接口(暂不实现); 提币额度与 KYC 等级挂钩", tags: ["api"] },
             { title: "Session 管理", desc: "JWT + Refresh Token; 多设备登录; Agent 授权机制", tags: ["api"] },
@@ -275,7 +275,7 @@ const DATA = {
             { title: "代理平仓", desc: "发送减仓指令; 从合并仓位中减去对应用户数量", tags: ["api"] },
             { title: "Agent 密钥管理", desc: "平台 HL Agent 密钥安全存储; 定期轮换; HSM 保护", tags: ["internal"] },
             { title: "滑点控制", desc: "市价单滑点上限设置; 超出则拒绝或拆单", tags: ["internal"] },
-            { title: "订单确认同步", desc: "HL 成交回执 → 更新 XBIT 内部映射表 → 推送用户", tags: ["internal"] },
+            { title: "订单确认同步", desc: "HL 成交回执 → 更新 平台 内部映射表 → 推送用户", tags: ["internal"] },
           ]
         },
         {
@@ -326,7 +326,7 @@ const DATA = {
             { title: "逐仓清算检测", desc: "(保证金 + 未实现PnL) ≤ 名义 × 维持率 → 触发; <1s 延迟", tags: ["internal"] },
             { title: "全仓清算检测", desc: "账户权益 ≤ 全仓维持保证金总需求 → 触发", tags: ["internal"] },
             { title: "INTERNAL 清算执行", desc: "内部结算 → 保证金归零 → 80%入利润 + 20%入准备金", tags: ["internal"] },
-            { title: "HL 清算执行", desc: "XBIT 判断 → 向 HL 发市价平仓指令 → 从合并仓位减去", tags: ["api"] },
+            { title: "HL 清算执行", desc: "平台 判断 → 向 HL 发市价平仓指令 → 从合并仓位减去", tags: ["api"] },
             { title: "全仓清算顺序", desc: "先平亏损最大仓位 → 重算 → 恢复则停止 → 否则继续平下一个", tags: ["internal"] },
             { title: "清算价格", desc: "以 HL 标记价格为准; 标记价格变动 → 1s 内完成清算判断", tags: ["internal"] },
           ]
@@ -392,7 +392,7 @@ const DATA = {
           details: [
             { title: "合约元数据", desc: "meta → 上架币种/杠杆范围/维持保证金率; 每小时同步", tags: ["api"] },
             { title: "资金费率", desc: "predictedFundings → 预测费率; 每 8h 结算", tags: ["api"] },
-            { title: "币种上架同步", desc: "HL 新增币种 → 自动检测并同步到 XBIT", tags: ["internal"] },
+            { title: "币种上架同步", desc: "HL 新增币种 → 自动检测并同步到 平台", tags: ["internal"] },
           ]
         },
         {
@@ -400,7 +400,7 @@ const DATA = {
           phase: 1,
           details: [
             { title: "断连重连", desc: "指数退避重连策略; 最大间隔 30s", tags: ["internal"] },
-            { title: "延迟监测", desc: "HL→XBIT 延迟 >500ms → 暂停对赌; >200ms → 告警", tags: ["internal"] },
+            { title: "延迟监测", desc: "HL→平台 延迟 >500ms → 暂停对赌; >200ms → 告警", tags: ["internal"] },
             { title: "价格异常检测", desc: "价格跳变超阈值 → 使用最后有效价格 → 告警", tags: ["internal"] },
             { title: "数据完整性", desc: "序号检查 / 快照+增量 / 定期全量校验", tags: ["internal"] },
           ]

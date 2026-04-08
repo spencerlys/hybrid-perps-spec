@@ -47,9 +47,9 @@ Funding Receipt = 5 × 4,000 × 0.00005 = $1.00 (short receives)
 
 **Expected Results:**
 - HL settles +$1.00 on platform HL account (automatic)
-- XBIT mirrors same amount to user account: user available_balance +$1.00
-- XBIT mirror amount = HL actual settlement amount (must match exactly)
-- If XBIT mirror ≠ HL actual → trigger reconciliation alert
+- Platform mirrors same amount to user account: user available_balance +$1.00
+- Platform mirror amount = HL actual settlement amount (must match exactly)
+- If Platform mirror ≠ HL actual → trigger reconciliation alert
 
 ---
 
@@ -84,7 +84,7 @@ Long receives = 0.1 × 100,000 × 0.00005 = $0.50
 
 ---
 
-## SC-FS-005: Funding Reconciliation — XBIT vs HL Drift Detection
+## SC-FS-005: Funding Reconciliation — Platform vs HL Drift Detection
 
 **Preconditions:**
 - Multiple users hold HYPERLIQUID positions
@@ -92,8 +92,8 @@ Long receives = 0.1 × 100,000 × 0.00005 = $0.50
 
 **Steps:**
 1. HL completes funding settlement; platform HL account changes by +$500
-2. XBIT mirrors funding for each user's HYPERLIQUID position using HL's published rate
-3. XBIT mirrored total = $498
+2. Platform mirrors funding for each user's HYPERLIQUID position using HL's published rate
+3. Platform mirrored total = $498
 4. Drift detected = $2 (0.4%)
 
 **Expected Results:**

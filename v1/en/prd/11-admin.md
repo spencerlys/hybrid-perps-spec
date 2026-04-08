@@ -37,7 +37,7 @@ phase: Phase 2-3
 
 | Metric | Description |
 |--------|-------------|
-| Daily drift total | Cumulative XBIT calc vs HL actual delta |
+| Daily drift total | Cumulative Platform calc vs HL actual delta |
 | Drift trend chart | 30-day daily drift line chart |
 | Per-asset drift ranking | Assets with largest drift |
 | Recent alert list | Trades with drift rate > 1% |
@@ -58,7 +58,7 @@ phase: Phase 2-3
 | User position query | Includes INTERNAL / HYPERLIQUID labels |
 | Order routing history | Per-order routing decision log |
 | Liquidation records | Liquidation details and margin-zeroing records |
-| Drift records | HL receipt vs XBIT calculation discrepancy details |
+| Drift records | HL receipt vs Platform calculation discrepancy details |
 | Manual balance adjustment | Requires approval workflow + full audit log |
 
 ## Role-Based Access Control (RBAC)

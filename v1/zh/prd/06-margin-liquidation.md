@@ -116,7 +116,7 @@ HL 的维保率按仓位大小分级，从 HL meta API 获取：
 
 ## 统一清算引擎
 
-适用于 INTERNAL 和 HYPERLIQUID 两种仓位，XBIT 是唯一清算主体。
+适用于 INTERNAL 和 HYPERLIQUID 两种仓位，平台 是唯一清算主体。
 
 ### 清算检测
 
