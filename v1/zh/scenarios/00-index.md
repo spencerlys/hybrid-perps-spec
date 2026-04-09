@@ -3,7 +3,7 @@ doc_id: scenarios-zh-index
 title: 业务场景记录索引
 version: 1.0
 lang: zh
-updated: 2026-04-08
+updated: 2026-04-09
 ---
 
 # 业务场景记录
@@ -17,10 +17,12 @@ updated: 2026-04-08
 
 | 文件 | 场景类别 | 场景数量 |
 |------|---------|---------|
-| [01-order-routing.md](01-order-routing.md) | 订单路由场景 | 6 |
+| [01-order-routing.md](01-order-routing.md) | 订单路由场景 | 8 |
 | [02-liquidation.md](02-liquidation.md) | 清算场景 | 6 |
 | [03-funding-settlement.md](03-funding-settlement.md) | 资金费结算场景 | 5 |
 | [04-deposit-withdrawal.md](04-deposit-withdrawal.md) | 充提币场景 | 6 |
+| [05-risk-hedge.md](05-risk-hedge.md) | 风控与对冲场景 | 8 |
+| [06-edge-cases.md](06-edge-cases.md) | 边缘场景与极端情况 | 12 |
 
 ## 场景编写规范
 
@@ -49,3 +51,13 @@ updated: 2026-04-08
 ### 按资产操作
 - 充值 → [04-deposit-withdrawal.md](04-deposit-withdrawal.md) SC-DW-001 ~ SC-DW-002
 - 提现 → [04-deposit-withdrawal.md](04-deposit-withdrawal.md) SC-DW-003 ~ SC-DW-006
+
+### 按风控与对冲
+- 净敞口触发对冲 → [05-risk-hedge.md](05-risk-hedge.md) SC-RH-001 ~ SC-RH-004
+- 准备金与熔断 → [05-risk-hedge.md](05-risk-hedge.md) SC-RH-005 ~ SC-RH-008
+
+### 按边缘场景
+- 通道故障 → [06-edge-cases.md](06-edge-cases.md) SC-EC-001, SC-EC-010
+- 资金危机 → [06-edge-cases.md](06-edge-cases.md) SC-EC-002, SC-EC-006
+- 极端行情 → [06-edge-cases.md](06-edge-cases.md) SC-EC-003, SC-EC-004
+- 系统异常 → [06-edge-cases.md](06-edge-cases.md) SC-EC-005, SC-EC-008, SC-EC-009, SC-EC-012

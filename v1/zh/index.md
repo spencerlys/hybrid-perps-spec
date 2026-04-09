@@ -3,7 +3,7 @@ doc_id: v1-zh-index
 title: 永续合约交易引擎 — 文档总索引
 version: 1.0
 lang: zh
-updated: 2026-04-08
+updated: 2026-04-09
 ---
 
 # 永续合约交易引擎 · 文档总索引
@@ -21,6 +21,7 @@ updated: 2026-04-08
 | [`prd/`](prd/00-index.md) | 产品需求文档（PRD 设计规划） |
 | [`scenarios/`](scenarios/00-index.md) | 业务场景记录 |
 | [`trading/`](trading/00-index.md) | 交易处理流程 |
+| [`mvp/`](mvp/00-revision-summary.md) | MVP 架构设计与交付文档 |
 
 ---
 
@@ -49,6 +50,7 @@ updated: 2026-04-08
 | [05-hl-execution.md](prd/05-hl-execution.md) | L4 HL 代理执行层 | Phase 2 |
 | [06-margin-liquidation.md](prd/06-margin-liquidation.md) | L5 保证金与清算模型 | Phase 3 |
 | [07-risk-management.md](prd/07-risk-management.md) | L6 风控与敞口管理层 | Phase 2 |
+| [07a-hedge-architecture.md](prd/07a-hedge-architecture.md) | L6 对冲系统架构设计 | Phase 2 |
 | [08-market-data.md](prd/08-market-data.md) | L7 市场数据层 | Phase 1 |
 | [09-settlement.md](prd/09-settlement.md) | L8 结算与对账层 | Phase 3 |
 | [10-withdrawal-liquidity.md](prd/10-withdrawal-liquidity.md) | 提现流动性保障 | Phase 1 |
@@ -66,6 +68,22 @@ updated: 2026-04-08
 | [02-liquidation.md](scenarios/02-liquidation.md) | 清算场景 |
 | [03-funding-settlement.md](scenarios/03-funding-settlement.md) | 资金费结算场景 |
 | [04-deposit-withdrawal.md](scenarios/04-deposit-withdrawal.md) | 充提币场景 |
+| [05-risk-hedge.md](scenarios/05-risk-hedge.md) | 风控与对冲场景 |
+| [06-edge-cases.md](scenarios/06-edge-cases.md) | 边缘场景与极端情况 |
+
+---
+
+## MVP 架构设计与交付文档
+
+| 文件 | 内容 |
+|------|------|
+| [00-revision-summary.md](mvp/00-revision-summary.md) | 修订总览 |
+| [01-architecture-baseline.md](mvp/01-architecture-baseline.md) | 统一架构基线 |
+| [02-domain-architecture.md](mvp/02-domain-architecture.md) | 两域解耦架构 |
+| [03-cost-revenue.md](mvp/03-cost-revenue.md) | 成本最小化与收益最大化 |
+| [04-dev-plan.md](mvp/04-dev-plan.md) | 多团队开发计划 |
+| [05-launch-rollback.md](mvp/05-launch-rollback.md) | 上线与回滚手册 |
+| [06-acceptance.md](mvp/06-acceptance.md) | 验收清单 |
 
 ---
 

@@ -18,9 +18,28 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 
 | Directory | Purpose |
 |-----------|---------|
+| [`mvp/`](#mvp--implementation-specification) | MVP Architecture & Implementation Specification |
 | [`prd/`](prd/00-index.md) | Product Requirements Documents (PRD) |
 | [`scenarios/`](scenarios/00-index.md) | Business Scenario Records |
 | [`trading/`](trading/00-index.md) | Trading Process Flows |
+
+---
+
+## MVP — Implementation Specification
+
+The MVP (Minimum Viable Product) specification covers design principles, architecture, cost/revenue analysis, development planning, launch strategy, and acceptance criteria for the three-phase rollout.
+
+| File | Title | Purpose |
+|------|-------|---------|
+| [00-revision-summary.md](mvp/00-revision-summary.md) | Revision Summary | Overview of MVP design changes, document structure, and key decisions |
+| [01-architecture-baseline.md](mvp/01-architecture-baseline.md) | Architecture Baseline | Core design principles, two-domain architecture, interface contracts, and consistency strategies |
+| [02-domain-architecture.md](mvp/02-domain-architecture.md) | Domain Architecture | Detailed responsibility scope, unidirectional dependencies, message queue design, and reconciliation |
+| [03-cost-revenue.md](mvp/03-cost-revenue.md) | Cost & Revenue Analysis | Cost minimization strategies, revenue sources, scenarios, and operational metrics |
+| [04-dev-plan.md](mvp/04-dev-plan.md) | Development Plan | 6-team structure, phase-by-phase hours, critical path, milestones, and risk mitigation |
+| [05-launch-rollback.md](mvp/05-launch-rollback.md) | Launch & Rollback Manual | Canary strategies, control matrix, alerts, degradation levels, and rollback procedures |
+| [06-acceptance.md](mvp/06-acceptance.md) | Acceptance Checklist | Phase-by-phase verification items, performance targets, test coverage, and sign-off criteria |
+
+**Reading Order**: Start with 00-revision-summary → 01-architecture-baseline → then phase-specific docs (02, 03, 04, 05, 06)
 
 ---
 
@@ -49,6 +68,7 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 | [05-hl-execution.md](prd/05-hl-execution.md) | L4 HL Proxy Execution Layer | Phase 2 |
 | [06-margin-liquidation.md](prd/06-margin-liquidation.md) | L5 Margin & Liquidation Model | Phase 3 |
 | [07-risk-management.md](prd/07-risk-management.md) | L6 Risk & Exposure Management | Phase 2 |
+| [07a-hedge-architecture.md](prd/07a-hedge-architecture.md) | L6 Hedge System Architecture Design | Phase 2 |
 | [08-market-data.md](prd/08-market-data.md) | L7 Market Data Layer | Phase 1 |
 | [09-settlement.md](prd/09-settlement.md) | L8 Settlement & Reconciliation | Phase 3 |
 | [10-withdrawal-liquidity.md](prd/10-withdrawal-liquidity.md) | Withdrawal Liquidity Guarantee | Phase 1 |
@@ -66,6 +86,8 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 | [02-liquidation.md](scenarios/02-liquidation.md) | Liquidation Scenarios |
 | [03-funding-settlement.md](scenarios/03-funding-settlement.md) | Funding Rate Settlement |
 | [04-deposit-withdrawal.md](scenarios/04-deposit-withdrawal.md) | Deposit & Withdrawal |
+| [05-risk-hedge.md](scenarios/05-risk-hedge.md) | Risk Control & Hedging Scenarios |
+| [06-edge-cases.md](scenarios/06-edge-cases.md) | Edge Cases & Extreme Conditions |
 
 ---
 
