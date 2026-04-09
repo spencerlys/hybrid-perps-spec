@@ -34,8 +34,6 @@ The MVP (Minimum Viable Product) specification covers design principles, archite
 | [00-revision-summary.md](mvp/00-revision-summary.md) | Revision Summary | Overview of MVP design changes, document structure, and key decisions |
 | [01-architecture-baseline.md](mvp/01-architecture-baseline.md) | Architecture Baseline | Core design principles, two-domain architecture, interface contracts, and consistency strategies |
 | [02-domain-architecture.md](mvp/02-domain-architecture.md) | Domain Architecture | Detailed responsibility scope, unidirectional dependencies, message queue design, and reconciliation |
-| [03-cost-revenue.md](mvp/03-cost-revenue.md) | Cost & Revenue Analysis | Cost minimization strategies, revenue sources, scenarios, and operational metrics |
-| [04-dev-plan.md](mvp/04-dev-plan.md) | Development Plan | 6-team structure, phase-by-phase hours, critical path, milestones, and risk mitigation |
 | [05-launch-rollback.md](mvp/05-launch-rollback.md) | Launch & Rollback Manual | Canary strategies, control matrix, alerts, degradation levels, and rollback procedures |
 | [06-acceptance.md](mvp/06-acceptance.md) | Acceptance Checklist | Phase-by-phase verification items, performance targets, test coverage, and sign-off criteria |
 
