@@ -80,8 +80,6 @@ updated: 2026-04-09
 | [00-revision-summary.md](mvp/00-revision-summary.md) | 修订总览 |
 | [01-architecture-baseline.md](mvp/01-architecture-baseline.md) | 统一架构基线 |
 | [02-domain-architecture.md](mvp/02-domain-architecture.md) | 两域解耦架构 |
-| [03-cost-revenue.md](mvp/03-cost-revenue.md) | 成本最小化与收益最大化 |
-| [04-dev-plan.md](mvp/04-dev-plan.md) | 多团队开发计划 |
 | [05-launch-rollback.md](mvp/05-launch-rollback.md) | 上线与回滚手册 |
 | [06-acceptance.md](mvp/06-acceptance.md) | 验收清单 |
 
