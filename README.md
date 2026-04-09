@@ -5,6 +5,7 @@
 > 📦 [`github.com/spencerlys/hybrid-perps-spec`](https://github.com/spencerlys/hybrid-perps-spec)
 
 本仓库是 永续合约交易引擎的**产品规格与设计文档**。不包含实现代码，仅包含 PRD、业务场景记录和交易流程说明。
+追求第一性原理，打破经验束缚，拆解问题至不可再分的基本事实，再通过演绎法推导解决方案。
 
 ---
 
