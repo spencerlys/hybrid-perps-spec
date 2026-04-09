@@ -119,3 +119,44 @@ related-prd: [prd/02-routing.md, prd/04-internal-execution.md, prd/05-hl-executi
 - BTC INTERNAL close → L3 internal settlement (no HL instruction sent)
 - BTC HYPERLIQUID close → L4 sends market close order to HL
 - Cross-system offset forbidden: INTERNAL cannot offset HYPERLIQUID
+
+---
+
+## SC-RT-007: Consecutive Opens Trigger Hedging
+
+**Preconditions:**
+- BTC mark price: $100,000; routing threshold: $10,000
+- Current BTC net exposure: $80,000 (long direction)
+- Hedging threshold: $100K triggers 50% hedge
+
+**Steps:**
+1. User A places BTC long order, notional $5,000 → INTERNAL ($5K < $10K threshold)
+2. User B places BTC long order, notional $8,000 → INTERNAL
+3. User C places BTC long order, notional $9,000 → INTERNAL
+
+**Expected Results:**
+- All three orders route to INTERNAL (each notional < $10K)
+- Cumulative net exposure: $80K + $5K + $8K + $9K = $102K
+- After the third fill, L6 detects net exposure > $100K
+- L6 triggers hedge: opens BTC short ~$51K on HL (50% × $102K)
+- Hedge instruction routes through L4 to HL, independent from user orders
+- Users remain unaware (still see normal INTERNAL positions)
+
+---
+
+## SC-RT-008: Natural Hedging from Multi-Directional Users
+
+**Preconditions:**
+- ETH mark price: $4,000; routing threshold: $10,000
+- Current ETH net exposure: $0
+
+**Steps:**
+1. User A places ETH long order, notional $8,000 → INTERNAL (platform holds short $8K)
+2. User B places ETH short order, notional $8,000 → INTERNAL (platform holds long $8K)
+
+**Expected Results:**
+- Both orders route to INTERNAL
+- Net exposure: $8K - $8K = $0 (long/short fully offset)
+- No hedging triggered
+- Platform earns both trading fees + future funding fees
+- This is the ideal state for the B-book model: zero directional risk while earning fees

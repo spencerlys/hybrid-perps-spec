@@ -48,7 +48,7 @@ Authoritative source: [../zh/index.md](../zh/index.md)
 | [04-internal-execution.md](prd/04-internal-execution.md) | L3 Internal Execution Layer | Phase 3 |
 | [05-hl-execution.md](prd/05-hl-execution.md) | L4 HL Proxy Execution Layer | Phase 2 |
 | [06-margin-liquidation.md](prd/06-margin-liquidation.md) | L5 Margin & Liquidation Model | Phase 3 |
-| [07-risk-management.md](prd/07-risk-management.md) | L6 Risk & Exposure Management | Phase 3 |
+| [07-risk-management.md](prd/07-risk-management.md) | L6 Risk & Exposure Management | Phase 2 |
 | [08-market-data.md](prd/08-market-data.md) | L7 Market Data Layer | Phase 1 |
 | [09-settlement.md](prd/09-settlement.md) | L8 Settlement & Reconciliation | Phase 3 |
 | [10-withdrawal-liquidity.md](prd/10-withdrawal-liquidity.md) | Withdrawal Liquidity Guarantee | Phase 1 |

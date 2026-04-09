@@ -241,7 +241,7 @@ const DATA = {
       phase: 3,
       modules: [
         {
-          name: "内部撮合执行", desc: "对赌成交逻辑 (<10ms)",
+          name: "内部对赌执行", desc: "对赌成交逻辑 (<10ms)",
           phase: 3,
           details: [
             { title: "市价成交", desc: "取 HL 当前最优买/卖价作为成交价; 即时确认", tags: ["internal"] },
@@ -336,11 +336,11 @@ const DATA = {
     {
       id: "l6", tag: "L6", name: "风控与敞口管理层", color: "6",
       desc: "净敞口监控、HL 自动对冲、风险准备金",
-      phase: 3,
+      phase: 2,
       modules: [
         {
           name: "净敞口监控", desc: "实时追踪平台方向性风险",
-          phase: 3,
+          phase: 2,
           details: [
             { title: "净敞口计算", desc: "per symbol: Σ(用户多头INTERNAL名义) - Σ(用户空头INTERNAL名义)", tags: ["internal"] },
             { title: "总敞口", desc: "所有币种净敞口绝对值之和", tags: ["internal"] },
@@ -350,7 +350,7 @@ const DATA = {
         },
         {
           name: "对冲引擎", desc: "在 HL 开反向仓位降低净敞口",
-          phase: 3,
+          phase: 2,
           details: [
             { title: "对冲阈值", desc: "<$100K不对冲 / $100-500K对冲50% / >$500K对冲80% / >$1M停对赌+80%", tags: ["internal"] },
             { title: "对冲执行", desc: "批量下单(batchModify); 时间分片; 滑点控制", tags: ["api"] },
@@ -360,7 +360,7 @@ const DATA = {
         },
         {
           name: "风险准备金", desc: "平台风险缓冲资金池",
-          phase: 3,
+          phase: 2,
           details: [
             { title: "资金来源", desc: "平台初始注入 ≥$500K + 客损20%自动转入 + 定期补充", tags: ["internal"] },
             { title: "客损分配", desc: "每笔客损: 80%→平台利润 / 20%→准备金; 比例可配", tags: ["admin"] },

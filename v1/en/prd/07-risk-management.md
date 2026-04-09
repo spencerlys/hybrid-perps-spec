@@ -2,13 +2,26 @@
 doc_id: prd-en-risk-management
 title: L6 Risk & Exposure Management — Net Exposure, Routing Mode Linkage, Hedging, Risk Reserve
 tags: [risk, exposure, hedge, reserve, monitoring, routing-mode, L6]
-version: 1.1
+version: 1.2
 lang: en
-updated: 2026-04-08
-phase: Phase 3
+updated: 2026-04-09
+phase: Phase 2
 ---
 
 # L6 Risk & Exposure Management
+
+> **Phase Adjustment Note (v1.2)**: Net exposure monitoring, hedging engine, and risk reserve are advanced from Phase 3 to Phase 2.
+> Rationale: Once the Phase 2 routing engine goes live, INTERNAL positions generate net exposure immediately, requiring concurrent hedging capability.
+> Routing mode auto-switching and full risk control dashboard remain in Phase 3.
+
+## Responsibility Boundary with L3 Internal Order Book
+
+**L6 hedging engine and L3 internal limit order queue are completely independent modules:**
+
+- **L3 Internal Order Book**: Manages pending limit order queues for INTERNAL positions, triggers fills at HL prices. Platform is always the counterparty; no user-to-user matching occurs.
+- **L6 Hedging Engine**: Independent of the order book. When net exposure exceeds thresholds, opens reverse positions on HL to reduce risk. Hedge instructions route through L4.
+
+Flow: Order → L3 internal accounting → L6 real-time net exposure aggregation → exceeds threshold → L6 triggers hedge → L4 proxies to HL
 
 ## Net Exposure (B-Book)
 
@@ -102,6 +115,21 @@ Per INTERNAL client loss:
 | Single-trade drift rate | > 1% | > 5% | Alert / halt HL for this asset |
 | Daily cumulative drift | > $1,000 | > $5,000 | Manual risk review |
 
+## Natural Hedging Effect
+
+In the Platform B-book model, when multiple users trade long and short the same asset simultaneously, the platform's net exposure naturally approaches zero:
+
+```
+User A: buys BTC $50,000 (INTERNAL) → Platform holds BTC short $50K
+User B: sells BTC $50,000 (INTERNAL) → Platform holds BTC long $50K
+Net Exposure = $50K - $50K = $0 (long/short fully offset)
+```
+
+This is the core profitability condition for the B-book model:
+- When balanced, platform has zero directional risk but still earns trading fees and funding fees
+- When users collectively lose (statistical edge), platform captures client loss revenue
+- The hedging engine only intervenes when positions become imbalanced (net exposure accumulates)
+
 ## Daily Loss Circuit Breaker
 
 ```
@@ -110,3 +138,15 @@ Daily INTERNAL net loss > $500K → Halt all internalization (route everything t
 
 Daily Net Loss = Σ(user gains) - Σ(user losses) (INTERNAL positions, current day)
 ```
+
+## Phase Delivery Schedule
+
+| Deliverable | Phase |
+|------------|-------|
+| Real-time net exposure calculation | Phase 2 |
+| Hedging engine (manual + auto-trigger) | Phase 2 |
+| Risk reserve basic management | Phase 2 |
+| Risk control monitoring metrics + daily loss circuit breaker | Phase 2 |
+| Routing mode auto-switching | Phase 3 |
+| Full risk control dashboard (Grafana panels) | Phase 3 |
+| Hedging strategy optimization (time-sliced execution, slippage optimization) | Phase 4 |

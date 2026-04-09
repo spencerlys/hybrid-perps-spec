@@ -48,7 +48,7 @@ updated: 2026-04-08
 | [04-internal-execution.md](prd/04-internal-execution.md) | L3 平台对赌执行层 | Phase 3 |
 | [05-hl-execution.md](prd/05-hl-execution.md) | L4 HL 代理执行层 | Phase 2 |
 | [06-margin-liquidation.md](prd/06-margin-liquidation.md) | L5 保证金与清算模型 | Phase 3 |
-| [07-risk-management.md](prd/07-risk-management.md) | L6 风控与敞口管理层 | Phase 3 |
+| [07-risk-management.md](prd/07-risk-management.md) | L6 风控与敞口管理层 | Phase 2 |
 | [08-market-data.md](prd/08-market-data.md) | L7 市场数据层 | Phase 1 |
 | [09-settlement.md](prd/09-settlement.md) | L8 结算与对账层 | Phase 3 |
 | [10-withdrawal-liquidity.md](prd/10-withdrawal-liquidity.md) | 提现流动性保障 | Phase 1 |

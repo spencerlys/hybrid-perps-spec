@@ -105,6 +105,24 @@ HL actual loss < Platform calculated loss:
   → Delta becomes platform profit (or returned to user — business decision)
 ```
 
+## Large Order Splitting Strategy (Phase 4)
+
+**Large order splitting is reserved for Phase 4 and not implemented in MVP.**
+
+When Phase 4 launches, the system will support automatic splitting of large HYPERLIQUID orders to minimize slippage and impact:
+
+### TWAP Strategy (Time-Weighted Average Price)
+- Divide large orders into equal-sized child orders
+- Space executions at fixed time intervals (e.g., 100ms apart)
+- Adapt interval based on market volatility and order book depth
+
+### Uniform Split Strategy
+- Divide by notional into fixed tranche sizes (e.g., 10 chunks)
+- Execute all tranches concurrently or sequentially based on market conditions
+- Track individual fill prices; compute volume-weighted entry price
+
+**Impact in MVP**: All orders sent to HL execute as single market orders without splitting.
+
 ## HL Consistency Check (Every 5 Minutes)
 
 ```

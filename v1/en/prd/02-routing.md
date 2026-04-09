@@ -100,6 +100,14 @@ Users cannot detect routing differences:
 - Same funding rate
 - Same liquidation parameters
 
+## MVP Routing Limitations
+
+**Single-order cross-threshold splitting is not supported in MVP:**
+
+- If an order's notional value spans the routing threshold (e.g., $7,000 INTERNAL + $3,000 HL), the entire order follows standard routing logic without splitting.
+- Cross-threshold order splitting is reserved for Phase 4 optimization.
+- To manage cumulative exposure, users can manually split large orders into multiple sub-orders within the system.
+
 ## Routing Log
 
 Every routing decision must be logged:

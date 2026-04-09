@@ -28,7 +28,7 @@ Platform currently relies on Hyperliquid as the underlying matching and settleme
 
 | In Scope | Out of Scope |
 |----------|-------------|
-| Order notional routing engine | Custom matching engine |
+| Order notional routing engine | Custom matching engine (**Option 3, future upgrade path**) |
 | Platform B-book position management | Custom price/index price system |
 | HL proxy execution and state sync | Independent market maker |
 | Isolated/cross margin models | Custom funding rates, leverage, or listed assets |
@@ -36,16 +36,19 @@ Platform currently relies on Hyperliquid as the underlying matching and settleme
 | Full HL calculation replication | Smart contract custody of user funds |
 | Multi-chain asset aggregation (ops layer) | Options, spot, copy trading |
 | 5-minute withdrawal SLA | User classification/risk profiling system |
-| Exposure control and hedging | — |
+| Exposure control and hedging | User-to-user order matching (Maker/Taker) |
+| — | Single-order cross-threshold splitting (Phase 4 reserved) |
+
+> **Custom Matching Engine (Option 3) Exclusion Note**: The current design is Option 2 (internal B-book + threshold-based hedging), where Platform is the sole counterparty for all INTERNAL positions. No user-to-user order matching occurs. A matching engine (including Maker/Taker mechanics, price/time priority queues, internal liquidity pools) is the future path toward Option 3 and is not in MVP scope.
 
 ## MVP Implementation Phases
 
 | Phase | Name | Key Deliverables |
 |-------|------|-----------------|
 | Phase 1 | Foundation | Account system + full HL API wrapper + market data passthrough + multi-chain aggregation + withdrawal guarantee |
-| Phase 2 | Routing MVP | Order notional routing + HL fill correction + drift logging (canary: all orders to HL initially) |
-| Phase 3 | Go Live | B-book execution layer + unified liquidation + isolated/cross margin + HL calc replication + drift fallback |
-| Phase 4 | Optimization | Routing threshold tuning + hedging optimization + drift reduction + aggregation optimization |
+| Phase 2 | Routing & Hedging MVP | Order notional routing + HL fill correction + drift logging + **hedge engine + net exposure monitoring + risk reserve** (canary: all orders to HL initially) |
+| Phase 3 | Go Live | B-book execution layer + unified liquidation + isolated/cross margin + HL calc replication + drift fallback + routing mode auto-switching + full risk dashboard |
+| Phase 4 | Optimization | Routing threshold tuning + hedging strategy optimization + drift reduction + **large order splitting + cross-threshold routing** |
 
 ## Revenue Sources
 

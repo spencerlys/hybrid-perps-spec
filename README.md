@@ -48,7 +48,7 @@ v1/
 | [04-internal-execution](v1/zh/prd/04-internal-execution.md) | L3 平台对赌执行层 | Phase 3 |
 | [05-hl-execution](v1/zh/prd/05-hl-execution.md) | L4 HL 代理执行层 | Phase 2 |
 | [06-margin-liquidation](v1/zh/prd/06-margin-liquidation.md) | L5 保证金与清算模型 | Phase 3 |
-| [07-risk-management](v1/zh/prd/07-risk-management.md) | L6 风控与敞口管理 | Phase 3 |
+| [07-risk-management](v1/zh/prd/07-risk-management.md) | L6 风控与敞口管理 | Phase 2 |
 | [08-market-data](v1/zh/prd/08-market-data.md) | L7 市场数据层 | Phase 1 |
 | [09-settlement](v1/zh/prd/09-settlement.md) | L8 结算与对账层 | Phase 3 |
 | [10-withdrawal-liquidity](v1/zh/prd/10-withdrawal-liquidity.md) | 提现流动性保障 | Phase 1 |
@@ -77,7 +77,7 @@ v1/
 
 ## 架构可视化 / Architecture Visualization
 
-打开 [`xbit-architecture-mindmap.html`](xbit-architecture-mindmap.html)（浏览器直接打开）可查看系统架构思维导图。
+打开 [`mindmap/index.html`](mindmap/index.html)（浏览器直接打开）可查看系统架构思维导图。
 
 ---
 
@@ -109,10 +109,10 @@ v1/
 
 | 阶段 | 内容 |
 |------|------|
-| **Phase 1** | 账户系统 + HL API 完整封装 + 市场数据直通 |
-| **Phase 2** | 路由引擎 + 金丝雀测试（初期全量路由至 HL） |
-| **Phase 3** | 内部执行引擎 + 统一清算 + 保证金模型 |
-| **Phase 4** | 路由阈值调优 + 对冲策略优化 |
+| **Phase 1** | 账户系统 + HL API 完整封装（R0 中继层）+ 市场数据直通 |
+| **Phase 2** | 路由引擎 + HL 代理执行 + **对冲引擎 + 净敞口监控 + 风险准备金**（灰度：全量路由至 HL） |
+| **Phase 3** | 内部执行引擎 + 统一清算 + 保证金模型 + 风控仪表盘 |
+| **Phase 4** | 路由阈值调优 + 对冲策略优化 + 大额拆单 |
 
 ---
 

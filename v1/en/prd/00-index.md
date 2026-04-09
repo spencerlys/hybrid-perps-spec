@@ -23,7 +23,7 @@ Each file covers one independent module and can be read standalone.
 | [04-internal-execution.md](04-internal-execution.md) | L3 Internal Execution | Internal position model, counterparty accounting, execution price | Phase 3 |
 | [05-hl-execution.md](05-hl-execution.md) | L4 HL Proxy Execution | Account architecture, position mapping, fill correction, drift monitoring | Phase 2 |
 | [06-margin-liquidation.md](06-margin-liquidation.md) | L5 Margin & Liquidation | Isolated/cross formulas, HL precision replication, liquidation engine | Phase 3 |
-| [07-risk-management.md](07-risk-management.md) | L6 Risk Management | Net exposure, hedging strategy, risk reserve | Phase 3 |
+| [07-risk-management.md](07-risk-management.md) | L6 Risk Management | Net exposure, hedging strategy, risk reserve | Phase 2 |
 | [08-market-data.md](08-market-data.md) | L7 Market Data | HL data passthrough, precision rule sync, exception handling | Phase 1 |
 | [09-settlement.md](09-settlement.md) | L8 Settlement | PnL formulas, funding settlement, drift fallback, three-way reconciliation | Phase 3 |
 | [10-withdrawal-liquidity.md](10-withdrawal-liquidity.md) | Withdrawal Liquidity | 5-min SLA, tiered processing, liquidity monitoring | Phase 1 |
