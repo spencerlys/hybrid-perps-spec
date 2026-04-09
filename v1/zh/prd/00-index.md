@@ -24,6 +24,7 @@ updated: 2026-04-08
 | [05-hl-execution.md](05-hl-execution.md) | L4 HL 代理执行层 | 账户架构、仓位映射、回执校正、偏差监控 | Phase 2 |
 | [06-margin-liquidation.md](06-margin-liquidation.md) | L5 保证金与清算模型 | 逐仓/全仓公式、HL 精度复刻、清算引擎 | Phase 3 |
 | [07-risk-management.md](07-risk-management.md) | L6 风控与敞口管理层 | 净敞口计算、对冲策略、风险准备金 | Phase 2 |
+| [07a-hedge-architecture.md](07a-hedge-architecture.md) | L6 对冲系统架构设计 | HL 账户模型、资金效率、预对冲评估、边缘场景 | Phase 2 |
 | [08-market-data.md](08-market-data.md) | L7 市场数据层 | HL 数据透传、精度规则同步、异常处理 | Phase 1 |
 | [09-settlement.md](09-settlement.md) | L8 结算与对账层 | PnL 公式、资金费结算、偏差兜底、三方对账 | Phase 3 |
 | [10-withdrawal-liquidity.md](10-withdrawal-liquidity.md) | 提现流动性保障 | 5 分钟到账保障、分级处理、流动性预警 | Phase 1 |
